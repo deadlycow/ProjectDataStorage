@@ -7,15 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="DataBase\" />
-    <Folder Include="Contexts\" />
     <Folder Include="Interfaces\" />
-    <Folder Include="Entities\" />
-    <Folder Include="Repositories\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Business\Business.csproj" />
+    <Folder Include="Dto\" />
+    <Folder Include="Factories\" />
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>
