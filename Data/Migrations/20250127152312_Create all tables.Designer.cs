@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(ContextDb))]
-    [Migration("20250126162659_Create Tables")]
-    partial class CreateTables
+    [Migration("20250127152312_Create all tables")]
+    partial class Createalltables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,12 +54,7 @@ namespace Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int?>("ProjectId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("ProjectId");
 
                     b.ToTable("Employee");
                 });
@@ -73,6 +68,9 @@ namespace Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 100L);
 
                     b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
                     b.Property<DateOnly?>("EndDate")
@@ -97,6 +95,8 @@ namespace Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
+
+                    b.HasIndex("EmployeeId");
 
                     b.HasIndex("StatusTypeId");
 
@@ -131,10 +131,9 @@ namespace Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Status")
+                    b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -156,21 +155,17 @@ namespace Data.Migrations
                     b.ToTable("ProjectService");
                 });
 
-            modelBuilder.Entity("Data.Entities.EmployeeEntity", b =>
-                {
-                    b.HasOne("Data.Entities.ProjectEntity", "Project")
-                        .WithMany("Employees")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Project");
-                });
-
             modelBuilder.Entity("Data.Entities.ProjectEntity", b =>
                 {
                     b.HasOne("Data.Entities.CustomerEntity", "Customer")
                         .WithMany("Project")
                         .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Data.Entities.EmployeeEntity", "Employees")
+                        .WithMany("Project")
+                        .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -181,6 +176,8 @@ namespace Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Customer");
+
+                    b.Navigation("Employees");
 
                     b.Navigation("StatusType");
                 });
@@ -205,9 +202,9 @@ namespace Data.Migrations
                     b.Navigation("Project");
                 });
 
-            modelBuilder.Entity("Data.Entities.ProjectEntity", b =>
+            modelBuilder.Entity("Data.Entities.EmployeeEntity", b =>
                 {
-                    b.Navigation("Employees");
+                    b.Navigation("Project");
                 });
 
             modelBuilder.Entity("Data.Entities.StatusEntity", b =>

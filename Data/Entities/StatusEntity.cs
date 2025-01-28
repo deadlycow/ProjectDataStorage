@@ -7,8 +7,8 @@ public class StatusEntity
   [Key]
   public int Id { get; set; }
   [Required]
-  [Column("nvarchar(100)")]
-  public string Status { get; set; } = null!;
+  [Column(TypeName ="nvarchar(100)")]
+  public string Name { get; set; } = null!;
 
   public ICollection<ProjectEntity> Project { get; set; } = null!;
 }
