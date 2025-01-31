@@ -24,6 +24,53 @@ public abstract class BaseRepository<TEntity>(ContextDb context) : IBaseReposito
     }
   }
 
+  public virtual async Task<IEnumerable<TEntity>?> GetAllAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>>? includeExpression = null)
+  {
+    try
+    {
+      IQueryable<TEntity> query = _dbSet;
+
+      if (includeExpression != null)
+        query = includeExpression(query);
+      
+      return await query.ToListAsync();
+    }
+    catch (Exception ex)
+    {
+      Debug.WriteLine($"Error fetching entities: {ex.Message}");
+      return null;
+    }
+  }
+  public async Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>> predicate, Func<IQueryable<TEntity>, IQueryable<TEntity>>? includeExpression = null)
+  {
+    try
+    {
+      IQueryable<TEntity> query = _dbSet;
+
+      if (includeExpression != null)
+        query = includeExpression(query);
+
+      return await query.FirstOrDefaultAsync(predicate);
+    }
+    catch (Exception ex)
+    {
+      Debug.WriteLine($"Error fetching entity: {ex.Message}");
+      return null;
+    }
+  }
+  public async Task<bool> UpdateAsync(TEntity entity)
+  {
+    try
+    {
+      _dbSet.Update(entity);
+      return await _context.SaveChangesAsync() > 0;
+    }
+    catch (Exception ex)
+    {
+      Debug.WriteLine($"Error updating entity: {ex.Message}");
+      return false;
+    }
+  }
   public async Task<bool> DeleteAsync(TEntity entity)
   {
     try
@@ -46,44 +93,6 @@ public abstract class BaseRepository<TEntity>(ContextDb context) : IBaseReposito
     catch (Exception ex)
     {
       Debug.WriteLine($"Error checking entity existence: {ex.Message}");
-      return false;
-    }
-  }
-
-  public async Task<IEnumerable<TEntity>?> GetAllAsync()
-  {
-    try
-    {
-      return await _dbSet.ToListAsync();
-    }
-    catch (Exception ex)
-    {
-      Debug.WriteLine($"Error fetching entities: {ex.Message}");
-      return null;
-    }
-  }
-  public async Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>> predicate)
-  {
-    try
-    {
-      return await _dbSet.FirstOrDefaultAsync(predicate);
-    }
-    catch (Exception ex)
-    {
-      Debug.WriteLine($"Error fetching entity: {ex.Message}");
-      return null;
-    }
-  }
-  public async Task<bool> UpdateAsync(TEntity entity)
-  {
-    try
-    {
-      _dbSet.Update(entity);
-      return await _context.SaveChangesAsync() > 0;
-    }
-    catch (Exception ex)
-    {
-      Debug.WriteLine($"Error updating entity: {ex.Message}");
       return false;
     }
   }

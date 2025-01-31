@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Createalltables : Migration
+    public partial class Initi : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -69,7 +69,7 @@ namespace Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "100, 1"),
+                        .Annotation("SqlServer:Identity", "101, 1"),
                     ProjectNumber = table.Column<string>(type: "nvarchar(max)", nullable: false, computedColumnSql: "'P-' + Cast(Id as varchar)", stored: true),
                     Name = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     StartDate = table.Column<DateOnly>(type: "date", nullable: false),
@@ -126,6 +126,12 @@ namespace Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Customer_Name",
+                table: "Customer",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Project_CustomerId",
                 table: "Project",
                 column: "CustomerId");
@@ -144,6 +150,18 @@ namespace Data.Migrations
                 name: "IX_ProjectService_ServiceId",
                 table: "ProjectService",
                 column: "ServiceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ServiceType_Name",
+                table: "ServiceType",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StatusType_Name",
+                table: "StatusType",
+                column: "Name",
+                unique: true);
         }
 
         /// <inheritdoc />

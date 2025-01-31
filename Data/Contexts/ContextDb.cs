@@ -25,7 +25,7 @@ public class ContextDb(DbContextOptions<ContextDb> options) : DbContext(options)
 
     modelBuilder.Entity<ProjectEntity>()
       .Property(e => e.Id)
-      .UseIdentityColumn(100, 1);
+      .UseIdentityColumn(101, 1);
 
     modelBuilder.Entity<ProjectEntity>()
       .Property(e => e.ProjectNumber)
