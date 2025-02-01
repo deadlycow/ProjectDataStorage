@@ -6,3 +6,10 @@
 .nav-link {
     color: #ffffff;
 }
+
+.banner {
+    background-color: #343a40;
+    text-align: center;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
