@@ -3,6 +3,7 @@ using Data.Entities;
 using Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Linq.Expressions;
 
 namespace Data.Repositories;
 
@@ -13,8 +14,6 @@ public class ProjectRepository(ContextDb context) : BaseRepository<ProjectEntity
     try
     {
       var entities = await _context.Project
-        .Include(p => p.Customer)
-        .Include(p => p.Employees)
         .Include(p => p.StatusType)
         .ToListAsync();
 

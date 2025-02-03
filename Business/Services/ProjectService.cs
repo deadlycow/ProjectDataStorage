@@ -3,6 +3,7 @@ using Business.Factories;
 using Business.Interfaces;
 using Business.Models;
 using Data.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace Business.Services;
@@ -14,9 +15,24 @@ public class ProjectService(IProjectRepository repository) : IProjectService
   {
     throw new NotImplementedException();
   }
-  public Task<IResult> GetByExpressoinAsync(Expression<Func<ProjectDto, bool>> predicate)
+  public async Task<IResult> GetByExpressionAsync(string projectNumber)
   {
-    throw new NotImplementedException();
+    var project = await _repository.GetAsync(
+        p => p.ProjectNumber == projectNumber,
+        query => query
+              .Include(p => p.Customer)
+              .Include(p => p.Employees)
+              .Include(p => p.StatusType)
+              .Include(p => p.ServiceTypes)
+    );
+
+    if (project == null)
+      return Result.NotFound("Project not found");
+
+    var model = PressentationFactory.Fetch(project);
+
+    return Result<PressentationDetailsModel>.Ok(model);
+
   }
   public Task<IResult> UpdateAsync(ProjectDto project)
   {

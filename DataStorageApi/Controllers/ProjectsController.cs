@@ -1,6 +1,7 @@
 ﻿using Business.Dto;
 using Business.Interfaces;
 using Business.Models;
+using Data.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,5 +22,14 @@ public class ProjectsController(IProjectService projectService) : ControllerBase
       return Ok(projects.Data);
 
     return BadRequest();
+  }
+  [HttpGet("{projectNumber}")]
+  public async Task<IActionResult> GetAsync(string projectNumber)
+  {
+    var result = await _projectService.GetByExpressionAsync(projectNumber);
+    if (result is Result<PressentationDetailsModel> projectDetails)
+      return Ok(projectDetails.Data);
+
+    return NotFound();
   }
 }

@@ -38,3 +38,10 @@ values
 --where CustomerId = 3
 
 
+select * from Project as p
+join Customer as c on p.CustomerId = c.Id
+join Employee as e on p.EmployeeId = e.Id
+join ProjectService as ps on p.Id = ps.ProjectId
+join ServiceType as st on ps.ServiceId = st.Id
+join StatusType as stt on p.StatusTypeId = stt.Id
+where p.ProjectNumber = 'P-101'

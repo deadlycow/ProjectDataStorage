@@ -1,12 +1,16 @@
 ﻿using Business.Dto;
+using Business.Factories;
+using Business.Models;
 using System.Linq.Expressions;
 
-namespace Business.Interfaces;
-public interface IProjectService
+namespace Business.Interfaces
 {
-  Task<IResult> CreateAsync(ProjectDto project);
-  Task<IResult> UpdateAsync(ProjectDto project);
-  Task<IResult> GetByExpressoinAsync(Expression<Func<ProjectDto, bool>> predicate);
-  Task<IResult> GetAllAsync();
-  Task<IResult> DeleteAsync(int id);
+  public interface IProjectService
+  {
+    public Task<IResult> CreateAsync(ProjectDto project);
+    public Task<IResult> GetByExpressionAsync(string projectNumber);
+    public Task<IResult> UpdateAsync(ProjectDto project);
+    public Task<IResult> GetAllAsync();
+    public Task<IResult> DeleteAsync(int id);
+  }
 }
