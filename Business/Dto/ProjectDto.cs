@@ -1,21 +1,25 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Data.Entities;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Business.Dto;
 public class ProjectDto
 {
-  [Key]
-  public int Id { get; set; }
-  [Required]
   public string ProjectNumber { get; set; } = null!;
   [Required]
   public string Name { get; set; } = null!;
   [Required]
   public DateOnly StartDate { get; set; }
   public DateOnly? EndDate { get; set; }
-  [Required]
+
   public int CustomerId { get; set; }
-  [Required]
+  public CustomerEntity Customer { get; set; } = null!;
+
   public int EmployeeId { get; set; }
-  [Required]
+  public EmployeeEntity Employees { get; set; } = null!;
+
+  public ICollection<ServiceEntity> ServiceTypes { get; set; } = null!;
+
   public int StatusTypeId { get; set; }
+  public StatusEntity StatusType { get; set; } = null!;
 }

@@ -7,22 +7,24 @@ public class ProjectFactory
   public static ProjectDto Create() => new();
   public static ProjectDto Create(ProjectEntity entity) => new()
   {
-    Id = entity.Id,
     ProjectNumber = entity.ProjectNumber,
     Name = entity.Name,
     StartDate = entity.StartDate,
     EndDate = entity.EndDate,
-    EmployeeId = entity.EmployeeId,
-    CustomerId = entity.CustomerId,
-    StatusTypeId = entity.StatusTypeId
+    Customer = entity.Customer,
+    Employees = entity.Employees,
+    StatusType = entity.StatusType,
   };
-  public static ProjectEntity Create(ProjectDto form) => new()
+
+  public static PressentationDetailsModel Fetch(ProjectEntity entity) => new()
   {
-    Name = form.Name,
-    StartDate = form.StartDate,
-    EndDate = form.EndDate,
-    EmployeeId = form.EmployeeId,
-    CustomerId = form.CustomerId,
-    StatusTypeId = form.StatusTypeId
+    ProjectNumber = entity.ProjectNumber,
+    Name = entity.Name,
+    StartDate = entity.StartDate,
+    EndDate = entity.EndDate,
+    CustomerName = entity.Customer.Name,
+    EmployeeName = entity.Employees.Name,
+    Status = entity.StatusType.Name,
+    ServiceType = entity.ServiceTypes.Select(s => s.Name).ToList(),
   };
 }

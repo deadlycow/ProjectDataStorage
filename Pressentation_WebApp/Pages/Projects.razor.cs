@@ -1,21 +1,21 @@
-﻿using Business.Models;
+﻿using Business.Dto;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
-using Pressentation_WebApp.Services;
+using System.Net.Http.Json;
 
 namespace Pressentation_WebApp.Pages
 {
-  public partial class Projects(NavigationManager navigationManager) : ComponentBase
+  public partial class Projects(NavigationManager navigationManager, HttpClient httpClient) : ComponentBase
   {
     private readonly NavigationManager navigationManager = navigationManager;
+    private readonly HttpClient _httpClient = httpClient;
+
 
     [Inject]
-    private ProjectsService _projectService { get; set; } = default!;
-    private IEnumerable<PressentationModel>? ProjectsList { get; set; }
+    private IEnumerable<ProjectDto>? ProjectsList { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-      ProjectsList = await _projectService.GetProjects();
+      ProjectsList = await _httpClient.GetFromJsonAsync<IEnumerable<ProjectDto>>("api/projects");
     }
 
     private static void DeleteProject(string projectNumber)

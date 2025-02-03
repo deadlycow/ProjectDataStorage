@@ -1,19 +1,75 @@
 ﻿@page "/project-details/{projectNumber}"
 
-<h3>Projektinformation</h3>
+<h3 class="mb-4">Projektinformation</h3>
 
-@* @if (DetailsModel != null) *@
-@* { *@
-@*     <p><strong>Projektnummer:</strong> @DetailsModel.ProjectNumber</p> *@
-@*     <p><strong>Namn:</strong> @DetailsModel.Name</p> *@
-@*     <p><strong>Startdatum:</strong> @DetailsModel.StartDate</p> *@
-@*     <p><strong>Slutdatum:</strong> @DetailsModel.EndDate</p> *@
-@*     <p><strong>Kund:</strong> @DetailsModel.CustomerName</p> *@
-@*     <p><strong>Anställd:</strong> @DetailsModel.EmployeeName</p> *@
-@*     <p><strong>Status:</strong> @DetailsModel.Status</p> *@
-@* } *@
+@if (model != null)
+{
+    <EditForm Model="model" OnValidSubmit="SaveChangesAsync">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-check mb-3">
+            <input type="checkbox" class="form-check-input" id="editToggle" @bind="isEditing" />
+            <label class="form-check-label" for="editToggle">Redigera</label>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Projektnummer</label>
+                <input type="text" class="form-control" @bind="model.ProjectNumber" disabled />
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Projekt</label>
+                <input type="text" class="form-control" @bind="model.Name" disabled="@(isEditing == false)" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Startdatum</label>
+                <input type="date" class="form-control" @bind="model.StartDate" disabled="@(isEditing == false)" />
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Slutdatum</label>
+                <input type="date" class="form-control" @bind="model.EndDate" disabled="@(isEditing == false)" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Kund</label>
+                <input type="text" class="form-control" @bind="model.CustomerName" disabled="@(isEditing == false)" />
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Anställd</label>
+                <input type="text" class="form-control" @bind="model.EmployeeName" disabled="@(isEditing == false)" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Status</label>
+                <select class="form-select" @bind="model.Status" disabled="@(isEditing == false)">
+
+                    <option value="Pågående" selected="@(model.Status == "Pågående")">Pågående</option>
+                    <option value="Avslutad" selected="@(model.Status == "Avslutad")">Avslutad</option>
+                    <option value="Ej påbörjad" selected="@(model.Status == "Ej påbörjad")">Ej påbörjad</option>
+                </select>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Service</label>
+            @foreach (var service in model.ServiceType!)
+            {
+                <div class="col-md-6 mb-3">
+                    <input type="text" class="form-control" value="@service" disabled="@(isEditing == false)" />
+                </div>
+            }
+        </div>
+
+        @if (isEditing)
+        {
+            <button type="submit" class="btn btn-primary">Spara ändringar</button>
+        }
+    </EditForm>
+}
 else
 {
     <p>Laddar projekt...</p>
 }
-

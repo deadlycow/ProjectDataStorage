@@ -1,8 +1,6 @@
 ﻿using Business.Dto;
 using Business.Interfaces;
 using Business.Models;
-using Data.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DataStorageApi.Controllers;
@@ -23,6 +21,7 @@ public class ProjectsController(IProjectService projectService) : ControllerBase
 
     return BadRequest();
   }
+
   [HttpGet("{projectNumber}")]
   public async Task<IActionResult> GetAsync(string projectNumber)
   {
@@ -32,4 +31,10 @@ public class ProjectsController(IProjectService projectService) : ControllerBase
 
     return NotFound();
   }
+
+  //[HttpPut]
+  //public async Task<IActionResult> UpdateProject([FromBody] PressentationDetailsModel updatedProject)
+  //{
+  //  var result = await _projectService.UpdateAsync()
+  //}
 }
