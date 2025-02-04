@@ -1,46 +1,61 @@
 ﻿@page "/create"
 @layout MainLayout
 
-<form class="row g-3">
-    <div class="col-md-2">
-        <label for="projectNr" class="form-label">Project nr</label>
-        <input type="text" class="form-control" id="projectNr">
+<h3 class="mb-4">Create</h3>
+
+
+<EditForm Model="model" OnValidSubmit="CreateProject">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Projektnamn</label>
+            <input type="text" class="form-control" @bind="model.Name" />
+        </div>
     </div>
-    <div class="col-md-10">
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Startdatum</label>
+            <input type="date" class="form-control" @bind="model.StartDate" />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Slutdatum</label>
+            <input type="date" class="form-control" @bind="model.EndDate" />
+        </div>
     </div>
-    <div class="col-md-6">
-        <label for="inputEmail4" class="form-label">Email</label>
-        <input type="email" class="form-control" id="inputEmail4">
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Kund</label>
+
+            <select class="form-selct" @bind="model.CustomerName" />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Anställd</label>
+            <select class="form-select">
+                @foreach (var customer in Customers!)
+                {
+                    <option value="@customer.Id">@customer.Name</option>
+                }
+            </select>
+        </div>
     </div>
-    <div class="col-md-6">
-        <label for="inputPassword4" class="form-label">Password</label>
-        <input type="password" class="form-control" id="inputPassword4">
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Status</label>
+            <select class="form-select" @bind="model.Status">
+                <option value="Pågående" selected="@(model.Status == "Pågående")">Pågående</option>
+                <option value="Avslutad" selected="@(model.Status == "Avslutad")">Avslutad</option>
+                <option value="Ej påbörjad" selected="@(model.Status == "Ej påbörjad")">Ej påbörjad</option>
+            </select>
+        </div>
     </div>
-    <div class="col-12">
-        <label for="inputAddress" class="form-label">Address</label>
-        <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">
-    </div>
-    <div class="col-12">
-        <label for="inputAddress2" class="form-label">Address 2</label>
-        <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor">
-    </div>
-    <div class="col-md-6">
-        <label for="inputCity" class="form-label">City</label>
-        <input type="text" class="form-control" id="inputCity">
-    </div>
-    <div class="col-md-4">
-        <label for="inputCustomer" class="form-label">Customer</label>
-        <select id="inputCustomer" class="form-select">
-            <option selected>...</option>
-            <option>...</option>
-        </select>
+    <div class="mb-3">
+        <label class="form-label">Service</label>
+
     </div>
 
-    <div class="col-12">
-        <button type="submit" class="btn btn-primary">Create</button>
-    </div>
-</form>
+    <button type="submit" class="btn btn-primary">Spara ändringar</button>
 
-@code {
-
-}
+</EditForm>

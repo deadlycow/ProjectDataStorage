@@ -7,6 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddControllers()
+  .AddJsonOptions(options =>
+  {
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+  });
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -17,6 +22,9 @@ builder.Services.AddDbContext<ContextDb>(x => x.UseSqlServer(@"Data Source=(Loca
 
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+
 
 var app = builder.Build();
 

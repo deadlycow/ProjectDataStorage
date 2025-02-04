@@ -14,9 +14,9 @@ public class ProjectsController(IProjectService projectService) : ControllerBase
   [HttpGet]
   public async Task<IActionResult> GetAll()
   {
-    var result = await _projectService.GetAllAsync();
+    var response = await _projectService.GetAllAsync();
     
-    if (result is Result<IEnumerable<PressentationModel>> projects)
+    if (response is Result<IEnumerable<ProjectDto>> projects)
       return Ok(projects.Data);
 
     return BadRequest();
@@ -25,16 +25,24 @@ public class ProjectsController(IProjectService projectService) : ControllerBase
   [HttpGet("{projectNumber}")]
   public async Task<IActionResult> GetAsync(string projectNumber)
   {
-    var result = await _projectService.GetByExpressionAsync(projectNumber);
-    if (result is Result<PressentationDetailsModel> projectDetails)
+    var response = await _projectService.GetByExpressionAsync(projectNumber);
+    if (response is Result<PressentationDetailsModel> projectDetails)
       return Ok(projectDetails.Data);
 
     return NotFound();
   }
 
-  //[HttpPut]
-  //public async Task<IActionResult> UpdateProject([FromBody] PressentationDetailsModel updatedProject)
-  //{
-  //  var result = await _projectService.UpdateAsync()
-  //}
+  [HttpDelete("{projectNumber}")]
+  public async Task<IActionResult> DeleteProject(string projectNumber)
+  {
+    var result = await _projectService.DeleteAsync(projectNumber);
+
+    return result.StatusCode switch
+    {
+      200 => Ok(),
+      404 => NotFound(result.ErrorMessage),
+      400 => BadRequest(result.ErrorMessage),
+      _ => StatusCode(500, result.ErrorMessage)
+    };
+  }
 }

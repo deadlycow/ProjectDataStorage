@@ -7,13 +7,12 @@ public class ProjectFactory
   public static ProjectDto Create() => new();
   public static ProjectDto Create(ProjectEntity entity) => new()
   {
+    Id = entity.Id,
     ProjectNumber = entity.ProjectNumber,
     Name = entity.Name,
     StartDate = entity.StartDate,
     EndDate = entity.EndDate,
-    Customer = entity.Customer,
-    Employees = entity.Employees,
-    StatusType = entity.StatusType,
+    StatusTypeName = entity.StatusType.Name,
   };
 
   public static PressentationDetailsModel Fetch(ProjectEntity entity) => new()
@@ -27,4 +26,7 @@ public class ProjectFactory
     Status = entity.StatusType.Name,
     ServiceType = entity.ServiceTypes.Select(s => s.Name).ToList(),
   };
+
+  public static IEnumerable<ProjectDto> CreateList(IEnumerable<ProjectEntity> entities) => entities.Select(Create).ToList();
+  
 }

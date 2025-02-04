@@ -1,4 +1,5 @@
 ﻿using Business.Dto;
+using Business.Models;
 using Microsoft.AspNetCore.Components;
 using System.Net.Http.Json;
 
@@ -18,16 +19,13 @@ namespace Pressentation_WebApp.Pages
       ProjectsList = await _httpClient.GetFromJsonAsync<IEnumerable<ProjectDto>>("api/projects");
     }
 
-    private static void DeleteProject(string projectNumber)
+    private async Task DeleteProject(string projectNumber)
     {
-      //var confirm = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this project?");
-      //if (confirm)
-      //{
-      //  await _projectService.DeleteProject(projectNumber);
-      //  ProjectsList = await _projectService.GetProjects();
-      //}
+      var response = await _httpClient.DeleteAsync($"api/projects/{projectNumber}");
+      if (response.IsSuccessStatusCode)
+        ProjectsList = await _httpClient.GetFromJsonAsync<IEnumerable<ProjectDto>>("api/projects");
     }
-    
+
     private void NavigateToProject(string projectNumber)
     {
       navigationManager.NavigateTo($"/project-details/{projectNumber}");

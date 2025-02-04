@@ -4,6 +4,7 @@ using Business.Interfaces;
 using Business.Models;
 using Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using System.Linq.Expressions;
 
 namespace Business.Services;
@@ -33,7 +34,7 @@ public class ProjectService(IProjectRepository repository) : IProjectService
 
     return Result<PressentationDetailsModel>.Ok(model);
   }
-  public async Task<IResult> UpdateAsync(string projectNumber, PressentationDetailsModel model)
+  public async Task<IResult> UpdateAsync(string id, ProjectDto model)
   {
     throw new NotImplementedException();
     //var project = await _repository.GetAsync(
@@ -63,14 +64,29 @@ public class ProjectService(IProjectRepository repository) : IProjectService
   }
   public async Task<IResult> GetAllAsync()
   {
-    var projectEntity = await _repository.GetAllAsync();
+    var respons = await _repository.GetAllAsync(
+      query => query
+      .Include(p => p.StatusType));
 
-    var projects = projectEntity?.Select(PressentationFactory.Create);
+    if (respons == null)
+      return Result.BadRequest("No projects");
 
-    return Result<IEnumerable<PressentationModel>>.Ok(projects);
+    var projects = ProjectFactory.CreateList(respons);
+
+    return Result<IEnumerable<ProjectDto>>.Ok(projects);
   }
-  public Task<IResult> DeleteAsync(int id)
+  public async Task<IResult> DeleteAsync(string id)
   {
-    throw new NotImplementedException();
+    if (string.IsNullOrWhiteSpace(id))
+      return Result.BadRequest("Invalid project ID");
+
+    var entity = await _repository.GetAsync(x => x.ProjectNumber == id);
+
+    if (entity == null)
+      return Result.NotFound($"Project with ID {id} not found");
+
+    var isDeleted = await _repository.DeleteAsync(entity);
+
+    return isDeleted ? Result.Ok() : Result.BadRequest("Failed to delete the project");
   }
 }
