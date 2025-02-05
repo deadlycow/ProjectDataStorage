@@ -18,7 +18,7 @@ public class ProjectService(IProjectRepository repository) : IProjectService
   }
   public async Task<IResult> GetByExpressionAsync(string projectNumber)
   {
-    var project = await _repository.GetAsync(
+    var response = await _repository.GetAsync(
         p => p.ProjectNumber == projectNumber,
         query => query
               .Include(p => p.Customer)
@@ -27,14 +27,13 @@ public class ProjectService(IProjectRepository repository) : IProjectService
               .Include(p => p.ServiceTypes)
     );
 
-    if (project == null)
+    if (response == null)
       return Result.NotFound("Project not found");
 
-    var model = ProjectFactory.Fetch(project);
-
-    return Result<PressentationDetailsModel>.Ok(model);
+    var project = ProjectFactory.CreateDetails(response);
+    return Result<ProjectDetails>.Ok(project);
   }
-  public async Task<IResult> UpdateAsync(string id, ProjectDto model)
+  public Task<IResult> UpdateAsync(string id, ProjectDto model)
   {
     throw new NotImplementedException();
     //var project = await _repository.GetAsync(
@@ -64,9 +63,7 @@ public class ProjectService(IProjectRepository repository) : IProjectService
   }
   public async Task<IResult> GetAllAsync()
   {
-    var respons = await _repository.GetAllAsync(
-      query => query
-      .Include(p => p.StatusType));
+    var respons = await _repository.GetAllAsync();
 
     if (respons == null)
       return Result.BadRequest("No projects");

@@ -1,10 +1,10 @@
-﻿@page "/project-details/{projectNumber}"
+﻿@page "/details/{projectNumber}"
 
 <h3 class="mb-4">Projektinformation</h3>
 
-@if (model != null)
+@if (Project != null)
 {
-    <EditForm Model="model" OnValidSubmit="SaveChangesAsync">
+    <EditForm Model="Project" OnValidSubmit="SaveChangesAsync">
         <DataAnnotationsValidator />
         <ValidationSummary />
 
@@ -15,47 +15,47 @@
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label class="form-label">Projektnummer</label>
-                <input type="text" class="form-control" @bind="model.ProjectNumber" disabled />
+                <input type="text" class="form-control" @bind="Project.ProjectNumber" disabled />
             </div>
             <div class="col-md-6 mb-3">
                 <label class="form-label">Projekt</label>
-                <input type="text" class="form-control" @bind="model.Name" disabled="@(isEditing == false)" />
+                <input type="text" class="form-control" @bind="Project.ProjectName" disabled="@(isEditing == false)" />
             </div>
         </div>
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label class="form-label">Startdatum</label>
-                <input type="date" class="form-control" @bind="model.StartDate" disabled="@(isEditing == false)" />
+                <input type="date" class="form-control" @bind="Project.StartDate" disabled="@(isEditing == false)" />
             </div>
             <div class="col-md-6 mb-3">
                 <label class="form-label">Slutdatum</label>
-                <input type="date" class="form-control" @bind="model.EndDate" disabled="@(isEditing == false)" />
+                <input type="date" class="form-control" @bind="Project.EndDate" disabled="@(isEditing == false)" />
             </div>
         </div>
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label class="form-label">Kund</label>
-                <input type="text" class="form-control" @bind="model.CustomerName" disabled="@(isEditing == false)" />
+                <input type="text" class="form-control" @bind="Project.CustomerName" disabled="@(isEditing == false)" />
             </div>
             <div class="col-md-6 mb-3">
                 <label class="form-label">Anställd</label>
-                <input type="text" class="form-control" @bind="model.EmployeeName" disabled="@(isEditing == false)" />
+                <input type="text" class="form-control" @bind="Project.EmployeeName" disabled="@(isEditing == false)" />
             </div>
         </div>
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label class="form-label">Status</label>
-                <select class="form-select" @bind="model.Status" disabled="@(isEditing == false)">
-
-                    <option value="Pågående" selected="@(model.Status == "Pågående")">Pågående</option>
-                    <option value="Avslutad" selected="@(model.Status == "Avslutad")">Avslutad</option>
-                    <option value="Ej påbörjad" selected="@(model.Status == "Ej påbörjad")">Ej påbörjad</option>
+                <select class="form-select" @bind="Project.StatusType" disabled="@(isEditing == false)">
+@* 
+                    <option value="Pågående" selected="@(Project.StatusTypeName == "Pågående")">Pågående</option>
+                    <option value="Avslutad" selected="@(Project.StatusTypeName== "Avslutad")">Avslutad</option>
+                    <option value="Ej påbörjad" selected="@(Project.StatusTypeName == "Ej påbörjad")">Ej påbörjad</option> *@
                 </select>
             </div>
         </div>
         <div class="mb-3">
             <label class="form-label">Service</label>
-            @foreach (var service in model.ServiceType!)
+            @foreach (var service in Project.Services!)
             {
                 <div class="col-md-6 mb-3">
                     <input type="text" class="form-control" value="@service" disabled="@(isEditing == false)" />

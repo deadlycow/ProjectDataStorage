@@ -28,7 +28,7 @@ namespace Pressentation_WebApp.Pages
 
     private void NavigateToProject(string projectNumber)
     {
-      navigationManager.NavigateTo($"/project-details/{projectNumber}");
+      navigationManager.NavigateTo($"/details/{projectNumber}");
     }
   }
 }

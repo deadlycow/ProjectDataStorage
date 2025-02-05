@@ -1,5 +1,4 @@
 ﻿using Business.Dto;
-using Business.Models;
 using Microsoft.AspNetCore.Components;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -12,13 +11,17 @@ namespace Pressentation_WebApp.Pages
 
     [Inject]
     private IEnumerable<CustomerDto>? Customers { get; set; }
+    private IEnumerable<EmployeeDto>? Employees { get; set; }
+    private IEnumerable<ServiceTypeDto>? ServiceType { get; set; }
     protected override async Task OnInitializedAsync()
     {
-      Customers = await _httpClient.GetFromJsonAsync<IEnumerable<CustomerDto>>("api/customer");
+      Customers = await _httpClient.GetFromJsonAsync<IEnumerable<CustomerDto>>("api/customer") ?? [];
+      Employees = await _httpClient.GetFromJsonAsync<IEnumerable<EmployeeDto>>("api/employee") ?? [];
+      ServiceType = await _httpClient.GetFromJsonAsync<IEnumerable<ServiceTypeDto>>("api/servicetype") ?? [];
     }
     private bool isEditing { get; set; } = false;
 
-    private PressentationDetailsModel model = new();
+    private CustomerDto model = new();
     public static void CreateProject()
     {
     }

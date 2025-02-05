@@ -1,5 +1,4 @@
-﻿using Data.Entities;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Business.Dto;
 public class ProjectDto
@@ -13,13 +12,11 @@ public class ProjectDto
   public DateOnly? EndDate { get; set; }
 
   public int CustomerId { get; set; }
-  public string Customer { get; set; } = null!;
+  public string? Customer { get; set; }
 
   public int EmployeeId { get; set; }
-  public string Employee { get; set; } = null!;
-
-  public ICollection<ServiceTypeDto> ServiceTypeNames { get; set; } = [];
+  public string? Employee { get; set; }
 
   public int StatusTypeId { get; set; }
-  public string StatusTypeName { get; set; } = null!;
+  public string? StatusTypeName { get; set; }
 }

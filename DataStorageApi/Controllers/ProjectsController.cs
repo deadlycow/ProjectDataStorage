@@ -26,7 +26,7 @@ public class ProjectsController(IProjectService projectService) : ControllerBase
   public async Task<IActionResult> GetAsync(string projectNumber)
   {
     var response = await _projectService.GetByExpressionAsync(projectNumber);
-    if (response is Result<PressentationDetailsModel> projectDetails)
+    if (response is Result<ProjectDetails> projectDetails)
       return Ok(projectDetails.Data);
 
     return NotFound();

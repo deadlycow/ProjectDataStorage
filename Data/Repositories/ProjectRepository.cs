@@ -15,6 +15,7 @@ public class ProjectRepository(ContextDb context) : BaseRepository<ProjectEntity
     {
       var entities = await _context.Project
         .Include(p => p.StatusType)
+        .Include(p => p.ServiceTypes)
         .ToListAsync();
 
       return entities;

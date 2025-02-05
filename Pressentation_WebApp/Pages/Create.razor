@@ -12,31 +12,49 @@
     <div class="row">
         <div class="col-md-6 mb-3">
             <label class="form-label">Projektnamn</label>
-            <input type="text" class="form-control" @bind="model.Name" />
+            <input type="text" class="form-control" />
         </div>
     </div>
     <div class="row">
         <div class="col-md-6 mb-3">
             <label class="form-label">Startdatum</label>
-            <input type="date" class="form-control" @bind="model.StartDate" />
+            <input type="date" class="form-control" />
         </div>
         <div class="col-md-6 mb-3">
             <label class="form-label">Slutdatum</label>
-            <input type="date" class="form-control" @bind="model.EndDate" />
+            <input type="date" class="form-control" />
         </div>
     </div>
     <div class="row">
         <div class="col-md-6 mb-3">
             <label class="form-label">Kund</label>
-
-            <select class="form-selct" @bind="model.CustomerName" />
+            <select class="form-select col-md-12">
+                @if (Customers != null)
+                {
+                    @foreach (var customer in Customers)
+                    {
+                        <option value="@customer.Id">@customer.Name</option>
+                    }
+                }
+                else
+                {
+                    <option disabled>Laddar kund..</option>
+                }
+            </select>
         </div>
         <div class="col-md-6 mb-3">
-            <label class="form-label">Anställd</label>
-            <select class="form-select">
-                @foreach (var customer in Customers!)
+            <label class="form-label">Anställda</label>
+            <select class="form-select col-md-12">
+                @if (Employees != null)
                 {
-                    <option value="@customer.Id">@customer.Name</option>
+                    @foreach (var employee in Employees)
+                    {
+                        <option value="@employee.Id">@employee.Name</option>
+                    }
+                }
+                else
+                {
+                    <option disabled>Laddar anställda..</option>
                 }
             </select>
         </div>
@@ -44,16 +62,28 @@
     <div class="row">
         <div class="col-md-6 mb-3">
             <label class="form-label">Status</label>
-            <select class="form-select" @bind="model.Status">
-                <option value="Pågående" selected="@(model.Status == "Pågående")">Pågående</option>
-                <option value="Avslutad" selected="@(model.Status == "Avslutad")">Avslutad</option>
-                <option value="Ej påbörjad" selected="@(model.Status == "Ej påbörjad")">Ej påbörjad</option>
+            <select class="form-select col-md-12" @bind="model.Name">
+                <option value="Pågående" selected="@(model.Name == "Pågående")">Pågående</option>
+                <option value="Avslutad" selected="@(model.Name == "Avslutad")">Avslutad</option>
+                <option value="Ej påbörjad" selected="@(model.Name == "Ej påbörjad")">Ej påbörjad</option>
             </select>
         </div>
     </div>
     <div class="mb-3">
-        <label class="form-label">Service</label>
-
+        <label class="form-label">Tjänster</label>
+        <select class="form-select mb-3 col-md-12">
+            @if (ServiceType != null)
+            {
+                @foreach (var service in ServiceType)
+                {
+                    <option value="@service.Id">@($"{service.Name} - {service.Price:0} kr")</option>
+                }
+            }
+            else
+            {
+                <option disabled>Laddar Tjänster..</option>
+            }
+        </select>
     </div>
 
     <button type="submit" class="btn btn-primary">Spara ändringar</button>
