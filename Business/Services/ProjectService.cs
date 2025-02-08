@@ -13,16 +13,29 @@ public class ProjectService(IProjectRepository repository) : IProjectService
 
   public async Task<IResult> CreateAsync(ProjectDto project)
   {
-    var entity = ProjectFactory.Create(project);
-    var response = await _repository.CreateAsync(entity);
-    if (response)
-      return Result.Ok();
+    if (project == null)
+      return Result.BadRequest("Project is null");
+    try
+    {
+      var entity = ProjectFactory.Create(project);
+      if (entity == null)
+        return Result.InternalServerError("Failed to process project to entity");
 
-    return Result.BadRequest("Error creating project");
+      var response = await _repository.CreateAsync(entity);
+      if (response)
+        return Result.Created();
+
+      return Result.BadRequest("Error creating project");
+    }
+    catch (Exception ex)
+    {
+      Debug.WriteLine(ex);
+      return Result.InternalServerError("An unexpected error occurred while creating project");
+    }
   }
   public async Task<IResult> GetAsync(string projectNumber)
   {
-    if (projectNumber == null)
+    if (string.IsNullOrWhiteSpace(projectNumber))
       return Result.BadRequest("ID cannot be empty or whitespace");
     try
     {
@@ -36,10 +49,13 @@ public class ProjectService(IProjectRepository repository) : IProjectService
                 .ThenInclude(p => p.Services)
       );
 
-
       if (response == null)
         return Result.NotFound("Project not found");
+
       var project = ProjectFactory.CreateDetails(response);
+      if (project == null)
+        return Result.InternalServerError("Failed to process project details to modell");
+
       return Result<ProjectDetails>.Ok(project);
     }
     catch (Exception ex)

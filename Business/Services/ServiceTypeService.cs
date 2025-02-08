@@ -3,6 +3,7 @@ using Business.Factories;
 using Business.Interfaces;
 using Business.Models;
 using Data.Interfaces;
+using System.Diagnostics;
 
 namespace Business.Services;
 public class ServiceTypeService(IServiceRepository serviceRepository) : IServiceTypeService
@@ -21,13 +22,24 @@ public class ServiceTypeService(IServiceRepository serviceRepository) : IService
 
   public async Task<IResult> GetAllAsync()
   {
-    var response = await _serviceRepository.GetAllAsync();
-    if (response == null)
-      return Result.BadRequest("No services found");
-    var services = ServiceTypeFactory.CreateList(response);
-    return Result<IEnumerable<ServiceTypeDto>>.Ok(services);
-  }
+    try
+    {
+      var response = await _serviceRepository.GetAllAsync();
+      if (response == null || !response.Any())
+        return Result.BadRequest("No services found");
 
+      var services = ServiceTypeFactory.CreateList(response);
+      if (services == null)
+        return Result.BadRequest("Failed to process services to dto");
+
+      return Result<IEnumerable<ServiceTypeDto>>.Ok(services);
+    }
+    catch (Exception ex)
+    {
+      Debug.WriteLine(ex);
+      return Result.InternalServerError("Error occurred while fetching services");
+    }
+  }
   public Task<IResult> GetAsync(string id)
   {
     throw new NotImplementedException();

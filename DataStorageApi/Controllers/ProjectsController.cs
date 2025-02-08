@@ -14,45 +14,88 @@ public class ProjectsController(IProjectService projectService) : ControllerBase
   [HttpGet]
   public async Task<IActionResult> GetAll()
   {
-    var response = await _projectService.GetAllAsync();
-    
-    if (response is Result<IEnumerable<ProjectDto>> projects)
-      return Ok(projects.Data);
+    try
+    {
+      var response = await _projectService.GetAllAsync();
 
-    return BadRequest();
+      if (response is Result<IEnumerable<ProjectDto>> projects)
+      {
+        if (projects.Success)
+          return Ok(projects.Data);
+
+        return BadRequest(projects.ErrorMessage);
+      }
+      return BadRequest("Unexpected response format");
+    }
+    catch (Exception ex)
+    {
+      return StatusCode(500, $"Internal server error: {ex.Message}");
+    }
   }
 
   [HttpGet("{projectNumber}")]
   public async Task<IActionResult> GetAsync(string projectNumber)
   {
-    var response = await _projectService.GetAsync(projectNumber);
-    if (response is Result<ProjectDetails> projectDetails)
-      return Ok(projectDetails.Data);
+    if (string.IsNullOrWhiteSpace(projectNumber))
+      return BadRequest("Project number cannot be empty or whitespace");
+    try
+    {
+      var response = await _projectService.GetAsync(projectNumber);
 
-    return NotFound();
+      if (response is Result<ProjectDetails> projectDetails)
+      {
+        if (projectDetails.Success)
+          return Ok(projectDetails.Data);
+
+        return BadRequest(projectDetails.ErrorMessage);
+      }
+      return NotFound("Project not found");
+    }
+    catch (Exception ex)
+    {
+      return StatusCode(500, $"Internal server error: {ex.Message}");
+    }
   }
 
   [HttpDelete("{projectNumber}")]
   public async Task<IActionResult> DeleteProject(string projectNumber)
   {
-    var result = await _projectService.DeleteAsync(projectNumber);
-
-    return result.StatusCode switch
+    if (string.IsNullOrWhiteSpace(projectNumber))
+      return BadRequest("Project number cannot be empty or whitespace");
+    try
     {
-      200 => Ok(),
-      404 => NotFound(result.ErrorMessage),
-      400 => BadRequest(result.ErrorMessage),
-      _ => StatusCode(500, result.ErrorMessage)
-    };
+      var result = await _projectService.DeleteAsync(projectNumber);
+
+      return result.StatusCode switch
+      {
+        200 => Ok(),
+        404 => NotFound(result.ErrorMessage),
+        400 => BadRequest(result.ErrorMessage),
+        _ => StatusCode(500, result.ErrorMessage)
+      };
+    }
+    catch (Exception ex)
+    {
+      return StatusCode(500, ex.Message);
+    }
   }
 
   [HttpPost("create-project")]
-  public async Task<IActionResult> CreateProject([FromBody]ProjectDto dto)
+  public async Task<IActionResult> CreateProject([FromBody] ProjectDto dto)
   {
-    var response = await _projectService.CreateAsync(dto);
-    if (response.Success)
-      return Ok(response);
+    if (dto == null)
+      return BadRequest("Project data is required");
+    try
+    {
+      var response = await _projectService.CreateAsync(dto);
+      if (response.Success)
+        return Ok(response);
 
-    return BadRequest();
+      return BadRequest(response.ErrorMessage);
+    }
+    catch (Exception ex)
+    {
+      return StatusCode(500, ex.Message);
+    }
   }
 }

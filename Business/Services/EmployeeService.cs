@@ -3,6 +3,7 @@ using Business.Factories;
 using Business.Interfaces;
 using Business.Models;
 using Data.Interfaces;
+using System.Diagnostics;
 
 namespace Business.Services;
 public class EmployeeService(IEmployeeRepository employeeRepository) : IEmployeeService
@@ -21,11 +22,21 @@ public class EmployeeService(IEmployeeRepository employeeRepository) : IEmployee
 
   public async Task<IResult> GetAllAsync()
   {
-    var response = await _employeeRepository.GetAllAsync();
-    if (response == null)
-      return Result.BadRequest("No employees");
-    var employees = EmployeeFactory.CreateList(response);
-    return Result<IEnumerable<EmployeeDto>>.Ok(employees);
+    try
+    {
+      var response = await _employeeRepository.GetAllAsync();
+      if (response == null || !response.Any())
+        return Result.BadRequest("No employees");
+
+      var employees = EmployeeFactory.CreateList(response);
+
+      return Result<IEnumerable<EmployeeDto>>.Ok(employees);
+    }
+    catch (Exception ex)
+    {
+      Debug.WriteLine(ex);
+      return Result.InternalServerError("Error occurred while fetching employees");
+    }
   }
 
   public Task<IResult> GetAsync(string id)
