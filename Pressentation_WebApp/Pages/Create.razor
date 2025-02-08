@@ -4,32 +4,38 @@
 <h3 class="mb-4">Create</h3>
 
 
-<EditForm Model="model" OnValidSubmit="CreateProject">
+<EditForm Model="Project" OnValidSubmit="CreateProject">
     <DataAnnotationsValidator />
-    <ValidationSummary />
 
+    <p>@message</p>
 
     <div class="row">
         <div class="col-md-6 mb-3">
             <label class="form-label">Projektnamn</label>
-            <input type="text" class="form-control" />
+            <input @bind-value="Project!.Name" type="text" class="form-control" placeholder="Ange projektnamn.." />
+            <ValidationMessage For="@(() => Project.Name)" />
         </div>
     </div>
     <div class="row">
         <div class="col-md-6 mb-3">
             <label class="form-label">Startdatum</label>
-            <input type="date" class="form-control" />
+            <input @bind-value="Project.StartDate" type="date" class="form-control" />
+            <ValidationMessage For="@(() => Project.StartDate)" />
         </div>
         <div class="col-md-6 mb-3">
             <label class="form-label">Slutdatum</label>
-            <input type="date" class="form-control" />
+            <input @bind-value="Project.EndDate" type="date" class="form-control" />
         </div>
     </div>
     <div class="row">
         <div class="col-md-6 mb-3">
-            <label class="form-label">Kund</label>
-            <select class="form-select col-md-12">
-                @if (Customers != null)
+            <div class="d-flex justify-content-between align-items-center">
+                <label class="form-label mb-0">Kund</label>
+                <button class="btn btn-light btn-sm mb-2" type="button">Lägg till ny +</button>
+            </div>
+            <select @bind="Project.CustomerId" class="form-control col-md-12">
+                <option value="0" selected disabled>Välj kund..</option>
+                @if (Customers is not null && Customers.Count() > 0)
                 {
                     @foreach (var customer in Customers)
                     {
@@ -41,11 +47,16 @@
                     <option disabled>Laddar kund..</option>
                 }
             </select>
+            <ValidationMessage For="@(() => Project.CustomerId)" />
         </div>
         <div class="col-md-6 mb-3">
-            <label class="form-label">Anställda</label>
-            <select class="form-select col-md-12">
-                @if (Employees != null)
+            <div class="d-flex justify-content-between align-items-center">
+                <label class="form-label mb-0">Projektansvarig</label>
+                <button class="btn btn-light btn-sm mb-2" type="button">Lägg till ny +</button>
+            </div>
+            <select @bind="Project.EmployeeId" class="form-control col-md-12">
+                <option value="0" selected disabled>Välj anställd..</option>
+                @if (Employees is not null && Employees.Count() > 0)
                 {
                     @foreach (var employee in Employees)
                     {
@@ -57,22 +68,34 @@
                     <option disabled>Laddar anställda..</option>
                 }
             </select>
+            <ValidationMessage For="@(() => Project.EmployeeId)" />
         </div>
     </div>
     <div class="row">
         <div class="col-md-6 mb-3">
             <label class="form-label">Status</label>
-            <select class="form-select col-md-12" @bind="model.Name">
-                <option value="Pågående" selected="@(model.Name == "Pågående")">Pågående</option>
-                <option value="Avslutad" selected="@(model.Name == "Avslutad")">Avslutad</option>
-                <option value="Ej påbörjad" selected="@(model.Name == "Ej påbörjad")">Ej påbörjad</option>
+            <select @bind="Project.StatusTypeId" class="form-control mb-3 col-md-12">
+                <option value="0" selected disabled>Sätt status..</option>
+                @if (StatusType is not null && StatusType.Count() > 0)
+                {
+                    @foreach (var status in StatusType)
+                    {
+                        <option value="@status.Id">@status.Name</option>
+                    }
+                }
+                else
+                {
+                    <option disabled>Laddar Tjänster..</option>
+                }
             </select>
+            <ValidationMessage For="@(() => Project.StatusTypeId)" />
         </div>
     </div>
     <div class="mb-3">
         <label class="form-label">Tjänster</label>
-        <select class="form-select mb-3 col-md-12">
-            @if (ServiceType != null)
+        <select @bind="SelectedServiceId" class="form-control mb-3 col-md-12">
+            <option value="0" disabled>Välj tjänst..</option>
+            @if (ServiceType is not null && ServiceType.Count() > 0)
             {
                 @foreach (var service in ServiceType)
                 {
@@ -84,6 +107,19 @@
                 <option disabled>Laddar Tjänster..</option>
             }
         </select>
+
+        <button type="button" class="btn btn-primary" @onclick="AddService">Lägg till</button>
+
+        <h5>Valda tjänster:</h5>
+        <ul>
+            @if (SelectedServiceIds is not null && SelectedServiceIds.Count > 0)
+            {
+                @foreach (var id in SelectedServiceIds)
+                {
+                    <li>Tjänst ID: @id</li>
+                }
+            }
+        </ul>
     </div>
 
     <button type="submit" class="btn btn-primary">Spara ändringar</button>

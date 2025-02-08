@@ -23,7 +23,7 @@ public class ProjectEntity
   public int EmployeeId { get; set; }
   public EmployeeEntity Employees { get; set; } = null!;
 
-  public ICollection<ServiceEntity> ServiceTypes { get; set; } = null!;
+  public ICollection<ProjectServiceEntity> ProjectService { get; set; } = null!;
 
   public int StatusTypeId { get; set; }
   public StatusEntity StatusType { get; set; } = null!;

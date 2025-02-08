@@ -25,7 +25,7 @@ public class ProjectsController(IProjectService projectService) : ControllerBase
   [HttpGet("{projectNumber}")]
   public async Task<IActionResult> GetAsync(string projectNumber)
   {
-    var response = await _projectService.GetByExpressionAsync(projectNumber);
+    var response = await _projectService.GetAsync(projectNumber);
     if (response is Result<ProjectDetails> projectDetails)
       return Ok(projectDetails.Data);
 
@@ -44,5 +44,15 @@ public class ProjectsController(IProjectService projectService) : ControllerBase
       400 => BadRequest(result.ErrorMessage),
       _ => StatusCode(500, result.ErrorMessage)
     };
+  }
+
+  [HttpPost("create-project")]
+  public async Task<IActionResult> CreateProject([FromBody]ProjectDto dto)
+  {
+    var response = await _projectService.CreateAsync(dto);
+    if (response.Success)
+      return Ok(response);
+
+    return BadRequest();
   }
 }

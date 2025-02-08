@@ -46,19 +46,17 @@
             <div class="col-md-6 mb-3">
                 <label class="form-label">Status</label>
                 <select class="form-select" @bind="Project.StatusType" disabled="@(isEditing == false)">
-@* 
-                    <option value="Pågående" selected="@(Project.StatusTypeName == "Pågående")">Pågående</option>
-                    <option value="Avslutad" selected="@(Project.StatusTypeName== "Avslutad")">Avslutad</option>
-                    <option value="Ej påbörjad" selected="@(Project.StatusTypeName == "Ej påbörjad")">Ej påbörjad</option> *@
+                    @* Här ska det loopas igenom en lista av status och väljas den som är lika med projektet *@
                 </select>
             </div>
         </div>
         <div class="mb-3">
             <label class="form-label">Service</label>
+            @* Ändra utseende till class="list-group" för ul och class="list-group-item" för li*@
             @foreach (var service in Project.Services!)
             {
                 <div class="col-md-6 mb-3">
-                    <input type="text" class="form-control" value="@service" disabled="@(isEditing == false)" />
+                    <input type="text" class="form-control" value="@service.Name" disabled="@(isEditing == false)" />
                 </div>
             }
         </div>

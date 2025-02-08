@@ -4,43 +4,59 @@ using Business.Interfaces;
 using Business.Models;
 using Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations.Operations;
-using System.Linq.Expressions;
+using System.Diagnostics;
 
 namespace Business.Services;
 public class ProjectService(IProjectRepository repository) : IProjectService
 {
   private readonly IProjectRepository _repository = repository;
 
-  public Task<IResult> CreateAsync(ProjectDto project)
+  public async Task<IResult> CreateAsync(ProjectDto project)
   {
-    throw new NotImplementedException();
+    var entity = ProjectFactory.Create(project);
+    var response = await _repository.CreateAsync(entity);
+    if (response)
+      return Result.Ok();
+
+    return Result.BadRequest("Error creating project");
   }
-  public async Task<IResult> GetByExpressionAsync(string projectNumber)
+  public async Task<IResult> GetAsync(string projectNumber)
   {
-    var response = await _repository.GetAsync(
-        p => p.ProjectNumber == projectNumber,
-        query => query
-              .Include(p => p.Customer)
-              .Include(p => p.Employees)
-              .Include(p => p.StatusType)
-              .Include(p => p.ServiceTypes)
-    );
+    if (projectNumber == null)
+      return Result.BadRequest("ID cannot be empty or whitespace");
+    try
+    {
+      var response = await _repository.GetAsync(
+          p => p.ProjectNumber == projectNumber,
+          query => query
+                .Include(p => p.Customer)
+                .Include(p => p.Employees)
+                .Include(p => p.StatusType)
+                .Include(p => p.ProjectService)
+                .ThenInclude(p => p.Services)
+      );
 
-    if (response == null)
-      return Result.NotFound("Project not found");
 
-    var project = ProjectFactory.CreateDetails(response);
-    return Result<ProjectDetails>.Ok(project);
+      if (response == null)
+        return Result.NotFound("Project not found");
+      var project = ProjectFactory.CreateDetails(response);
+      return Result<ProjectDetails>.Ok(project);
+    }
+    catch (Exception ex)
+    {
+      Debug.WriteLine($"Error fetching project with ID{projectNumber}: {ex}");
+      return Result.InternalServerError($"{ex}");
+    }
   }
   public Task<IResult> UpdateAsync(string id, ProjectDto model)
-  {
+  {  // dax att ta tag i denna 
     throw new NotImplementedException();
     //var project = await _repository.GetAsync(
     //    p => p.ProjectNumber == projectNumber,
     //    query => query
     //          .Include(p => p.Customer)
     //          .Include(p => p.Employees)
+
     //          .Include(p => p.StatusType)
     //          .Include(p => p.ServiceTypes)
     //);
@@ -63,27 +79,44 @@ public class ProjectService(IProjectRepository repository) : IProjectService
   }
   public async Task<IResult> GetAllAsync()
   {
-    var respons = await _repository.GetAllAsync();
+    try
+    {
+      var respons = await _repository.GetAllAsync(
+        query => query
+        .Include(p => p.StatusType));
 
-    if (respons == null)
-      return Result.BadRequest("No projects");
+      if (respons == null || !respons.Any())
+        return Result.NotFound("No projects");
 
-    var projects = ProjectFactory.CreateList(respons);
-
-    return Result<IEnumerable<ProjectDto>>.Ok(projects);
+      var projects = ProjectFactory.CreateList(respons);
+      return Result<IEnumerable<ProjectDto>>.Ok(projects);
+    }
+    catch (Exception ex)
+    {
+      Debug.WriteLine($"Error fetching all projects: {ex}");
+      return Result.InternalServerError($"{ex}");
+    }
   }
-  public async Task<IResult> DeleteAsync(string id)
+  public async Task<IResult> DeleteAsync(string projecNumber)
   {
-    if (string.IsNullOrWhiteSpace(id))
-      return Result.BadRequest("Invalid project ID");
+    if (string.IsNullOrWhiteSpace(projecNumber))
+      return Result.BadRequest("ID cannot be empty or whitespace");
+    try
+    {
+      var response = await _repository.GetAsync(x => x.ProjectNumber == projecNumber);
+      if (response == null)
+        return Result.NotFound($"Project with ID {projecNumber} not found");
 
-    var entity = await _repository.GetAsync(x => x.ProjectNumber == id);
+      var isDeleted = await _repository.DeleteAsync(response);
+      if (!isDeleted)
+        return Result.InternalServerError($"Failed to delete project with ID {projecNumber}");
 
-    if (entity == null)
-      return Result.NotFound($"Project with ID {id} not found");
-
-    var isDeleted = await _repository.DeleteAsync(entity);
-
-    return isDeleted ? Result.Ok() : Result.BadRequest("Failed to delete the project");
+      return Result.Ok();
+    }
+    catch (Exception ex)
+    {
+      Debug.WriteLine($"Error deleting project {projecNumber}: {ex}");
+      return Result.InternalServerError($"{ex}");
+    }
   }
 }

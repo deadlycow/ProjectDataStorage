@@ -9,6 +9,7 @@ public class ContextDb(DbContextOptions<ContextDb> options) : DbContext(options)
   public DbSet<StatusEntity> StatusType { get; set; }
   public DbSet<ProjectEntity> Project { get; set; }
   public DbSet<EmployeeEntity> Employee { get; set; }
+  public DbSet<ProjectServiceEntity> ProjectService { get; set; }
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
     modelBuilder.Entity<CustomerEntity>()
@@ -43,19 +44,17 @@ public class ContextDb(DbContextOptions<ContextDb> options) : DbContext(options)
       .HasForeignKey(p => p.EmployeeId)
       .OnDelete(DeleteBehavior.Restrict);
 
-    modelBuilder.Entity<ProjectEntity>()
-      .HasOne(p => p.StatusType)
-      .WithMany(s => s.Project)
-      .HasForeignKey(p => p.StatusTypeId)
-      .OnDelete(DeleteBehavior.Restrict);
+    modelBuilder.Entity<ProjectServiceEntity>()
+      .HasKey(ps => new { ps.ProjectId, ps.ServiceId });
 
-    modelBuilder.Entity<ProjectEntity>()
-      .HasMany(p => p.ServiceTypes)
-      .WithMany(s => s.Project)
-      .UsingEntity<Dictionary<string, object>>(
-         "ProjectService",
-         j => j.HasOne<ServiceEntity>().WithMany().HasForeignKey("ServiceId"),
-         j => j.HasOne<ProjectEntity>().WithMany().HasForeignKey("ProjectId")
-        );
+    modelBuilder.Entity<ProjectServiceEntity>()
+      .HasOne(ps => ps.Projects)
+      .WithMany(p => p.ProjectService)
+      .HasForeignKey(ps => ps.ProjectId);
+
+    modelBuilder.Entity<ProjectServiceEntity>()
+      .HasOne(ps => ps.Services)
+      .WithMany(s => s.ProjectService)
+      .HasForeignKey(ps => ps.ServiceId);
   }
 }

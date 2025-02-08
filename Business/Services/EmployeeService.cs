@@ -28,7 +28,7 @@ public class EmployeeService(IEmployeeRepository employeeRepository) : IEmployee
     return Result<IEnumerable<EmployeeDto>>.Ok(employees);
   }
 
-  public Task<IResult> GetByExpressionAsync(string id)
+  public Task<IResult> GetAsync(string id)
   {
     throw new NotImplementedException();
   }

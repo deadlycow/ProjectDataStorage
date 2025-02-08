@@ -28,6 +28,8 @@ builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IServiceTypeService, ServiceTypeService>();
+builder.Services.AddScoped<IStatusRepository, StatusRepoitory>();
+builder.Services.AddScoped<IStatusTypeService, StatusTypeService>();
 
 
 var app = builder.Build();

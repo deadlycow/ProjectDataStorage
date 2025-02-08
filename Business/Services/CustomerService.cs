@@ -29,7 +29,7 @@ public class CustomerService(ICustomerRepository customerRepository) : ICustomer
     return Result<IEnumerable<CustomerDto>>.Ok(customers);
   }
 
-  public Task<IResult> GetByExpressionAsync(string id)
+  public Task<IResult> GetAsync(string id)
   {
     throw new NotImplementedException();
   }

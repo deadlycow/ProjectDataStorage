@@ -26,9 +26,31 @@ public class ProjectFactory
     ProjectName = entity.Name,
     StartDate = entity.StartDate,
     EndDate = entity.EndDate,
+    CustomerId = entity.CustomerId,
     CustomerName = entity.Customer.Name,
+    EmployeeId = entity.EmployeeId,
     EmployeeName = entity.Employees.Name,
+    StatusTypeId = entity.StatusType.Id,
     StatusType = entity.StatusType.Name,
-    Services = entity.ServiceTypes.Select(x => x.Name).ToList(),
+    Services = entity.ProjectService.Select(ps => new ServiceTypeDto
+    {
+      Id = ps.ServiceId,
+      Name = ps.Services.Name,
+      Price = ps.Services.Price,
+    }).ToList(),
+  };
+
+  public static ProjectEntity Create(ProjectDto reg) => new()
+  {
+    Name = reg.Name,
+    StartDate = reg.StartDate,
+    EndDate = reg.EndDate,
+    CustomerId = reg.CustomerId,
+    EmployeeId = reg.EmployeeId,
+    StatusTypeId = reg.StatusTypeId,
+    ProjectService = reg.ServiceTypeIds.Select(id => new ProjectServiceEntity
+    {
+      ServiceId = id,
+    }).ToList(),
   };
 }

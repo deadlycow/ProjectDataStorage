@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(ContextDb))]
-    [Migration("20250131082449_Initi")]
-    partial class Initi
+    [Migration("20250208063756_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -106,6 +106,21 @@ namespace Data.Migrations
                     b.ToTable("Project");
                 });
 
+            modelBuilder.Entity("Data.Entities.ProjectServiceEntity", b =>
+                {
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProjectId", "ServiceId");
+
+                    b.HasIndex("ServiceId");
+
+                    b.ToTable("ProjectService");
+                });
+
             modelBuilder.Entity("Data.Entities.ServiceEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -149,21 +164,6 @@ namespace Data.Migrations
                     b.ToTable("StatusType");
                 });
 
-            modelBuilder.Entity("ProjectService", b =>
-                {
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ProjectId", "ServiceId");
-
-                    b.HasIndex("ServiceId");
-
-                    b.ToTable("ProjectService");
-                });
-
             modelBuilder.Entity("Data.Entities.ProjectEntity", b =>
                 {
                     b.HasOne("Data.Entities.CustomerEntity", "Customer")
@@ -181,7 +181,7 @@ namespace Data.Migrations
                     b.HasOne("Data.Entities.StatusEntity", "StatusType")
                         .WithMany("Project")
                         .HasForeignKey("StatusTypeId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Customer");
@@ -191,19 +191,23 @@ namespace Data.Migrations
                     b.Navigation("StatusType");
                 });
 
-            modelBuilder.Entity("ProjectService", b =>
+            modelBuilder.Entity("Data.Entities.ProjectServiceEntity", b =>
                 {
-                    b.HasOne("Data.Entities.ProjectEntity", null)
-                        .WithMany()
+                    b.HasOne("Data.Entities.ProjectEntity", "Projects")
+                        .WithMany("ProjectService")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Data.Entities.ServiceEntity", null)
-                        .WithMany()
+                    b.HasOne("Data.Entities.ServiceEntity", "Services")
+                        .WithMany("ProjectService")
                         .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Projects");
+
+                    b.Navigation("Services");
                 });
 
             modelBuilder.Entity("Data.Entities.CustomerEntity", b =>
@@ -214,6 +218,16 @@ namespace Data.Migrations
             modelBuilder.Entity("Data.Entities.EmployeeEntity", b =>
                 {
                     b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("Data.Entities.ProjectEntity", b =>
+                {
+                    b.Navigation("ProjectService");
+                });
+
+            modelBuilder.Entity("Data.Entities.ServiceEntity", b =>
+                {
+                    b.Navigation("ProjectService");
                 });
 
             modelBuilder.Entity("Data.Entities.StatusEntity", b =>

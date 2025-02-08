@@ -28,7 +28,7 @@ public class ServiceTypeService(IServiceRepository serviceRepository) : IService
     return Result<IEnumerable<ServiceTypeDto>>.Ok(services);
   }
 
-  public Task<IResult> GetByExpressionAsync(string id)
+  public Task<IResult> GetAsync(string id)
   {
     throw new NotImplementedException();
   }
