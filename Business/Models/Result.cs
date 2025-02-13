@@ -26,4 +26,13 @@ public class Result<T> : Result, IResult<T>
       Data = data
     };
   }
+  public static Result<T> Created(T? data)
+  {
+    return new Result<T>
+    {
+      Success = true,
+      StatusCode = 201,
+      Data = data
+    };
+  }
 }

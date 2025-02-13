@@ -1,4 +1,5 @@
 ﻿using Business.Dto;
+using Business.Factories;
 using Business.Interfaces;
 using Business.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -81,17 +82,36 @@ public class ProjectsController(IProjectService projectService) : ControllerBase
   }
 
   [HttpPost("create-project")]
-  public async Task<IActionResult> CreateProject([FromBody] ProjectDto dto)
+  public async Task<ActionResult<ProjectDto>> CreateProject([FromBody] ProjectDto dto)
   {
     if (dto == null)
       return BadRequest("Project data is required");
     try
     {
       var response = await _projectService.CreateAsync(dto);
+      if (response.Success && response is Result<ProjectDto> item)
+        return Ok(item.Data);
+
+      return BadRequest(response.ErrorMessage);
+    }
+    catch (Exception ex)
+    {
+      return StatusCode(500, ex.Message);
+    }
+  }
+  [HttpPut]
+  public async Task<IActionResult> UpdateProject([FromBody]ProjectDetails form)
+  {
+    if (form == null)
+      return BadRequest("Project data is null");
+    try
+    {
+      var dto = ProjectFactory.Update(form);
+      var response = await _projectService.UpdateAsync(dto);
       if (response.Success)
         return Ok(response);
 
-      return BadRequest(response.ErrorMessage);
+      return BadRequest("Project was NOT updated");
     }
     catch (Exception ex)
     {

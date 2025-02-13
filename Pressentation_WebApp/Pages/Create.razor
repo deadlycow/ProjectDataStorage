@@ -1,13 +1,12 @@
 ﻿@page "/create"
 @layout MainLayout
+@using Pressentation_WebApp.Components;
 
-<h3 class="mb-4">Create</h3>
+<h3 class="mb-4">@message</h3>
 
 
 <EditForm Model="Project" OnValidSubmit="CreateProject">
     <DataAnnotationsValidator />
-
-    <p>@message</p>
 
     <div class="row">
         <div class="col-md-6 mb-3">
@@ -72,10 +71,10 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6 mb-3">
+        <div class="col-md-6">
             <label class="form-label">Status</label>
             <select @bind="Project.StatusTypeId" class="form-control mb-3 col-md-12">
-                <option value="0" selected disabled>Sätt status..</option>
+                <option value="0" disabled>Välj en status..</option>
                 @if (StatusType is not null && StatusType.Count() > 0)
                 {
                     @foreach (var status in StatusType)
@@ -89,39 +88,43 @@
                 }
             </select>
             <ValidationMessage For="@(() => Project.StatusTypeId)" />
+
+            <button type="submit" class="btn btn-primary">Skapa projekt</button>
         </div>
-    </div>
-    <div class="mb-3">
-        <label class="form-label">Tjänster</label>
-        <select @bind="SelectedServiceId" class="form-control mb-3 col-md-12">
-            <option value="0" disabled>Välj tjänst..</option>
-            @if (ServiceType is not null && ServiceType.Count() > 0)
-            {
-                @foreach (var service in ServiceType)
-                {
-                    <option value="@service.Id">@($"{service.Name} - {service.Price:0} kr")</option>
-                }
-            }
-            else
-            {
-                <option disabled>Laddar Tjänster..</option>
-            }
-        </select>
-
-        <button type="button" class="btn btn-primary" @onclick="AddService">Lägg till</button>
-
-        <h5>Valda tjänster:</h5>
-        <ul>
-            @if (SelectedServiceIds is not null && SelectedServiceIds.Count > 0)
-            {
-                @foreach (var id in SelectedServiceIds)
-                {
-                    <li>Tjänst ID: @id</li>
-                }
-            }
-        </ul>
+        <AddServices IsEditing="true" ProjectServices="Services" />
     </div>
 
-    <button type="submit" class="btn btn-primary">Spara ändringar</button>
+
+    @* <div class="mb-3"> *@
+    @*     <label class="form-label">Tjänster</label> *@
+    @*     <select @bind="SelectedServiceId" class="form-control mb-3 col-md-12"> *@
+    @*         <option value="0" disabled>Välj tjänst..</option> *@
+    @*         @if (ServiceType is not null && ServiceType.Count() > 0) *@
+    @*         { *@
+    @*             @foreach (var service in ServiceType) *@
+    @*             { *@
+    @*                 <option value="@service.Id">@($"{service.Name} - {service.Price:0} kr")</option> *@
+    @*             } *@
+    @*         } *@
+    @*         else *@
+    @*         { *@
+    @*             <option disabled>Laddar Tjänster..</option> *@
+    @*         } *@
+    @*     </select> *@
+
+    @*     <button type="button" class="btn btn-primary" @onclick="AddService">Lägg till</button> *@
+
+    @*     <h5>Valda tjänster:</h5> *@
+    @*     <ul> *@
+    @*         @if (SelectedServiceIds is not null && SelectedServiceIds.Count > 0) *@
+    @*         { *@
+    @*             @foreach (var id in SelectedServiceIds) *@
+    @*             { *@
+    @*                 <li>Tjänst ID: @id</li> *@
+    @*             } *@
+    @*         } *@
+    @*     </ul> *@
+    @* </div> *@
+
 
 </EditForm>

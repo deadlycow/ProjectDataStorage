@@ -1,4 +1,5 @@
 ﻿@page "/details/{projectNumber}"
+@using Pressentation_WebApp.Components;
 
 <h3 class="mb-4">Projektinformation</h3>
 
@@ -8,14 +9,10 @@
         <DataAnnotationsValidator />
         <ValidationSummary />
 
-        <div class="form-check mb-3">
-            <input type="checkbox" class="form-check-input" id="editToggle" @bind="isEditing" />
-            <label class="form-check-label" for="editToggle">Redigera</label>
-        </div>
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label class="form-label">Projektnummer</label>
-                <input type="text" class="form-control" @bind="Project.ProjectNumber" disabled />
+                <p type="text" disabled> @Project.ProjectNumber</p>
             </div>
             <div class="col-md-6 mb-3">
                 <label class="form-label">Projekt</label>
@@ -35,36 +32,65 @@
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label class="form-label">Kund</label>
-                <input type="text" class="form-control" @bind="Project.CustomerName" disabled="@(isEditing == false)" />
+                <select type="text" class="form-control" @bind="Project.CustomerId" disabled="@(isEditing == false)">
+                    @if (Customers != null)
+                    {
+                        @foreach (var customer in Customers)
+                        {
+                            <option value="@customer.Id">@customer.Name</option>
+                        }
+                    }
+                    else
+                    {
+                        <option>Laddar kunder..</option>
+                    }
+                </select>
             </div>
             <div class="col-md-6 mb-3">
                 <label class="form-label">Anställd</label>
-                <input type="text" class="form-control" @bind="Project.EmployeeName" disabled="@(isEditing == false)" />
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <label class="form-label">Status</label>
-                <select class="form-select" @bind="Project.StatusType" disabled="@(isEditing == false)">
-                    @* Här ska det loopas igenom en lista av status och väljas den som är lika med projektet *@
+                <select type="text" class="form-control" @bind="Project.EmployeeId" disabled="@(isEditing == false)">
+                    @if (Employees != null)
+                    {
+                        @foreach (var employee in Employees)
+                        {
+                            <option value="@employee.Id">@employee.Name</option>
+                        }
+                    }
+                    else
+                    {
+                        <option>Laddar anställda..</option>
+                    }
                 </select>
             </div>
         </div>
-        <div class="mb-3">
-            <label class="form-label">Service</label>
-            @* Ändra utseende till class="list-group" för ul och class="list-group-item" för li*@
-            @foreach (var service in Project.Services!)
-            {
-                <div class="col-md-6 mb-3">
-                    <input type="text" class="form-control" value="@service.Name" disabled="@(isEditing == false)" />
+        <div class="row">
+            <div class="col-md-6">
+                <label class="form-label">Status</label>
+                <select class="form-control" @bind="Project.StatusTypeId" disabled="@(isEditing == false)">
+                    @if (Status != null && Status.Any())
+                        @foreach (var stat in Status)
+                        {
+                            <option value="@stat.Id">@stat.Name</option>
+                        }
+                    else
+                    {
+                        <option value="0">Laddar status...</option>
+                    }
+                </select>
+                <div class="row">
+                    <div class="col-md-12 mt-5 d-flex ">
+                        <button type="submit" class="btn btn-primary" disabled="@(isEditing?false:true)">
+                            @buttonStatus
+                        </button>
+                        <div class="form-check d-flex align-items-center ml-4">
+                            <input type="checkbox" class="form-check-input" id="editToggle" @bind="isEditing" />
+                            <label class="form-check-label" for="editToggle">Redigera</label>
+                        </div>
+                    </div>
                 </div>
-            }
+            </div>
+            <Pressentation_WebApp.Components.AddServices IsEditing="isEditing" ProjectServices="ServiceList" Id="Id" />
         </div>
-
-        @if (isEditing)
-        {
-            <button type="submit" class="btn btn-primary">Spara ändringar</button>
-        }
     </EditForm>
 }
 else

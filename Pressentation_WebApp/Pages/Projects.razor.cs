@@ -12,22 +12,35 @@ namespace Pressentation_WebApp.Pages
 
     [Inject]
     private IEnumerable<ProjectDto>? ProjectsList { get; set; }
+    private bool showConfirmDialog = false;
+    private string projectToDelete = "";
 
     protected override async Task OnInitializedAsync()
     {
       ProjectsList = await _httpClient.GetFromJsonAsync<IEnumerable<ProjectDto>>("api/projects");
     }
 
-    private async Task DeleteProject(string projectNumber)
+    private async Task DeleteProject(bool confirm)
     {
-      var response = await _httpClient.DeleteAsync($"api/projects/{projectNumber}");
-      if (response.IsSuccessStatusCode)
-        ProjectsList = await _httpClient.GetFromJsonAsync<IEnumerable<ProjectDto>>("api/projects");
+      showConfirmDialog = false;
+      if (confirm)
+      {
+        var response = await _httpClient.DeleteAsync($"api/projects/{projectToDelete}");
+
+        if (response.IsSuccessStatusCode)
+          ProjectsList = await _httpClient.GetFromJsonAsync<IEnumerable<ProjectDto>>("api/projects");
+      }
     }
 
     private void NavigateToProject(string projectNumber)
     {
       navigationManager.NavigateTo($"/details/{projectNumber}");
+    }
+
+    private void ConfirmDelete(string projectNumber)
+    {
+      projectToDelete = projectNumber;
+      showConfirmDialog = true;
     }
   }
 }

@@ -11,19 +11,6 @@ namespace Pressentation_WebApp.Pages
   public partial class Create(HttpClient httpClient)
   {
     private readonly HttpClient _httpClient = httpClient;
-
-    [Inject]
-    private IEnumerable<CustomerDto>? Customers { get; set; }
-    private IEnumerable<EmployeeDto>? Employees { get; set; }
-    private IEnumerable<ServiceTypeDto>? ServiceType { get; set; }
-    private IEnumerable<StatusDto>? StatusType { get; set; }
-
-
-    private ProjectDto? Project { get; set; } = new();
-    private int SelectedServiceId { get; set; } = 0;
-    private List<int> SelectedServiceIds { get; set; } = [];
-
-    private string? message;
     protected override async Task OnInitializedAsync()
     {
       Customers = await _httpClient.GetFromJsonAsync<IEnumerable<CustomerDto>>("api/customer") ?? [];
@@ -31,39 +18,53 @@ namespace Pressentation_WebApp.Pages
       ServiceType = await _httpClient.GetFromJsonAsync<IEnumerable<ServiceTypeDto>>("api/servicetype") ?? [];
       StatusType = await _httpClient.GetFromJsonAsync<IEnumerable<StatusDto>>("api/status") ?? [];
     }
+    [Parameter]
+    public List<ProjectServiceDto> Services { get; set; } = [];
+
+    private IEnumerable<CustomerDto>? Customers { get; set; }
+    private IEnumerable<EmployeeDto>? Employees { get; set; }
+    private IEnumerable<ServiceTypeDto>? ServiceType { get; set; }
+    private IEnumerable<StatusDto>? StatusType { get; set; }
+
+    private ProjectDto? Project { get; set; } = new();
+    private string? message;
+    //private int SelectedServiceId { get; set; } = 0;
+    //private List<int> SelectedServiceIds { get; set; } = [];
 
     public async Task CreateProject()
     {
-      // städa här
+      if (Project == null)
+        return;
+
       var validationContext = new ValidationContext(Project);
       List<ValidationResult> validationResults = [];
-      bool isValid = Validator.TryValidateObject(Project, validationContext, validationResults, true);
-      if (!isValid)
+      //bool isValid = 
+      Validator.TryValidateObject(Project, validationContext, validationResults, true);
+      //if (!isValid)
+      //{
+      //  message = "Project inhåller ogiltiga värden!";
+      //  return;
+      //}
+
+      var postTask = await _httpClient.PostAsJsonAsync("api/projects/create-project", Project);
+      if (!postTask.IsSuccessStatusCode)
       {
-        message = "Project inhåller ogiltiga värden!";
+        message = "Projektet kunde inte skapas korrekt";
         return;
       }
-      if (SelectedServiceIds != null && SelectedServiceIds.Count > 0)
-        Project.ServiceTypeIds = SelectedServiceIds;
 
-      var response = await _httpClient.PostAsJsonAsync("api/projects/create-project", Project);
+      var createdProject = await postTask.Content.ReadFromJsonAsync<ProjectDto>();
+      var postTasdk = await _httpClient.PostAsJsonAsync($"api/projectservice/{createdProject.Id}", Services);
+      if (!postTasdk.IsSuccessStatusCode)
+      {
+        message = "Något gick fel vid skapandet av tjänster";
+        return;
+      }
 
-      if (response.IsSuccessStatusCode)
-      {
-        Project = new();
-        message = "projekt skapat";
-      }
-      else
-      {
-        message = "något gick fel";
-      }
-    }
-    public void AddService()
-    {
-      if (SelectedServiceId != 0 && !SelectedServiceIds!.Contains(SelectedServiceId))
-      {
-        SelectedServiceIds.Add(SelectedServiceId);
-      }
+      Project = new();
+      Services = [];
+      message = "projekt skapat";
+
     }
   }
 }

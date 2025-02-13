@@ -17,3 +17,7 @@
 .tr-mouse{
     cursor: pointer;
 }
+
+.list-group-item{
+    color: black;
+}

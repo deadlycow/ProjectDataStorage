@@ -22,8 +22,11 @@ public class ProjectService(IProjectRepository repository) : IProjectService
         return Result.InternalServerError("Failed to process project to entity");
 
       var response = await _repository.CreateAsync(entity);
-      if (response)
-        return Result.Created();
+      if (response != null)
+      {
+        var dto = ProjectFactory.Create(response); 
+        return Result<ProjectDto>.Created(dto);
+      }
 
       return Result.BadRequest("Error creating project");
     }
@@ -64,34 +67,19 @@ public class ProjectService(IProjectRepository repository) : IProjectService
       return Result.InternalServerError($"{ex}");
     }
   }
-  public Task<IResult> UpdateAsync(string id, ProjectDto model)
-  {  // dax att ta tag i denna 
-    throw new NotImplementedException();
-    //var project = await _repository.GetAsync(
-    //    p => p.ProjectNumber == projectNumber,
-    //    query => query
-    //          .Include(p => p.Customer)
-    //          .Include(p => p.Employees)
+  public async Task<IResult> UpdateAsync(ProjectDto dto)
+  {
+    if (dto != null)
+    {
+      var entity = ProjectFactory.Update(dto);
 
-    //          .Include(p => p.StatusType)
-    //          .Include(p => p.ServiceTypes)
-    //);
+      var response = await _repository.UpdateAsync(entity);
 
-    //project.Name = model.Name;
-    //project.StartDate = model.StartDate;
-    //project.EndDate = model.EndDate;
-    //project.Customer.Name = model.CustomerName;
-    //project.Employees.Name = model.EmployeeName;
-    //project.StatusType.Name = model.Status;
-    //project.ServiceTypes = model.ServiceType?.Select(st => new ServiceType { Name = st }).ToList();
+      if (response)
+        return Result.Ok();
+    }
 
-
-
-    //var response = await _repository.UpdateAsync(project);
-    //if (response)
-    //  return Result.Ok();
-
-    //return Result.BadRequest("Something went wrong");
+    return Result.BadRequest("Failed to update");
   }
   public async Task<IResult> GetAllAsync()
   {
@@ -102,7 +90,7 @@ public class ProjectService(IProjectRepository repository) : IProjectService
         .Include(p => p.StatusType));
 
       if (respons == null || !respons.Any())
-        return Result.NotFound("No projects");
+        return Result.NotFound("No projects found");
 
       var projects = ProjectFactory.CreateList(respons);
       return Result<IEnumerable<ProjectDto>>.Ok(projects);

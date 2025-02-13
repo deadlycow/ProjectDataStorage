@@ -26,5 +26,5 @@ public class ProjectDto
   public int StatusTypeId { get; set; }
   public string? StatusTypeName { get; set; }
   
-  public List<int> ServiceTypeIds{ get; set; } = [];
+  //public List<int> ServiceTypeIds{ get; set; } = [];
 }

@@ -1,8 +1,6 @@
 ﻿using Business.Dto;
 using Business.Interfaces;
 using Business.Models;
-using Business.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DataStorageApi.Controllers
@@ -17,7 +15,7 @@ namespace DataStorageApi.Controllers
     public async Task<IActionResult> GetAll()
     {
       var response = await _serviceTypeService.GetAllAsync();
-      if (response is Result<IEnumerable<ServiceTypeDto>> services) 
+      if (response is Result<IEnumerable<ServiceTypeDto>> services)
         return Ok(services.Data);
 
       return BadRequest(response);

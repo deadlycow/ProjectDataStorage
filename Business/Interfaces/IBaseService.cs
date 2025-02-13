@@ -1,9 +1,9 @@
 ﻿namespace Business.Interfaces;
-public interface IBaseService<TEntity, TKey> where TEntity : class
+public interface IBaseService<TDto, TKey> where TDto : class
 {
-  public Task<IResult> CreateAsync(TEntity entity);
+  public Task<IResult> CreateAsync(TDto entity);
   public Task<IResult> GetAsync(TKey id);
-  public Task<IResult> UpdateAsync(TKey id, TEntity entity);
+  public Task<IResult> UpdateAsync(TDto entity);
   public Task<IResult> GetAllAsync();
   public Task<IResult> DeleteAsync(TKey id);
 }

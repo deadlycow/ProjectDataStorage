@@ -45,7 +45,7 @@ public class ServiceTypeService(IServiceRepository serviceRepository) : IService
     throw new NotImplementedException();
   }
 
-  public Task<IResult> UpdateAsync(string id, ServiceTypeDto entity)
+  public Task<IResult> UpdateAsync(ServiceTypeDto entity)
   {
     throw new NotImplementedException();
   }

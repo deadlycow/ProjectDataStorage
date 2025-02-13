@@ -1,6 +1,6 @@
 ﻿@page "/"
 
-@if (ProjectsList is null)
+@if (ProjectsList == null)
 {
     <p><strong>Loading...</strong></p>
 }
@@ -27,10 +27,13 @@ else
                     <td>@project.EndDate</td>
                     <td>@project.StatusTypeName</td>
                     <td>
-                        <button class="btn btn-danger" @onclick="() => DeleteProject(project.ProjectNumber!)" @onclick:stopPropagation="true">Delete</button>
+                        <button class="btn btn-danger" @onclick="() => ConfirmDelete(project.ProjectNumber!)" @onclick:stopPropagation="true">Delete</button>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
+    @if (showConfirmDialog){
+        <Pressentation_WebApp.Components.ConfirmDialog OnConfirmed="DeleteProject"/>
+    }
 }

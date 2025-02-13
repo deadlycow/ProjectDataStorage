@@ -44,7 +44,7 @@ public class EmployeeService(IEmployeeRepository employeeRepository) : IEmployee
     throw new NotImplementedException();
   }
 
-  public Task<IResult> UpdateAsync(string id, EmployeeDto entity)
+  public Task<IResult> UpdateAsync(EmployeeDto entity)
   {
     throw new NotImplementedException();
   }

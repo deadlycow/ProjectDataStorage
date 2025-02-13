@@ -3,6 +3,7 @@ using Business.Interfaces;
 using Business.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace DataStorageApi.Controllers;
 
@@ -14,10 +15,18 @@ public class StatusController(IStatusTypeService statusTypeService) : Controller
   [HttpGet]
   public async Task<IActionResult> GetAll()
   {
-    var response = await _statusTypeService.GetAllAsync();
-    if (response is Result<IEnumerable<StatusDto>> statusTypes)
-      return Ok(statusTypes.Data);
+    try
+    {
+      var response = await _statusTypeService.GetAllAsync();
+      if (response is Result<IEnumerable<StatusDto>> statusTypes)
+        return Ok(statusTypes.Data);
 
-    return BadRequest(response);
+      return NoContent();
+    }
+    catch (Exception ex)
+    {
+      Debug.WriteLine(ex);
+      return StatusCode(500, "Error failed");
+    }
   }
 }

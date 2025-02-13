@@ -30,6 +30,8 @@ builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IServiceTypeService, ServiceTypeService>();
 builder.Services.AddScoped<IStatusRepository, StatusRepoitory>();
 builder.Services.AddScoped<IStatusTypeService, StatusTypeService>();
+builder.Services.AddScoped<IProjectServiceRepository, ProjectServiceRepository>();
+builder.Services.AddScoped<IProjectServiceService, ProjectServiceService>();
 
 
 var app = builder.Build();
