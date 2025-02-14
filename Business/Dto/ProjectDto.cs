@@ -25,6 +25,4 @@ public class ProjectDto
   [Range(1, int.MaxValue, ErrorMessage = "En status är obligatorisk")]
   public int StatusTypeId { get; set; }
   public string? StatusTypeName { get; set; }
-  
-  //public List<int> ServiceTypeIds{ get; set; } = [];
 }

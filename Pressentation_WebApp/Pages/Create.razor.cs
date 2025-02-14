@@ -1,9 +1,7 @@
 ﻿using Business.Dto;
 using Microsoft.AspNetCore.Components;
-using Microsoft.Identity.Client;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System.ComponentModel.DataAnnotations;
-using System.Net.Http;
+using System.Diagnostics;
 using System.Net.Http.Json;
 
 namespace Pressentation_WebApp.Pages
@@ -15,7 +13,6 @@ namespace Pressentation_WebApp.Pages
     {
       Customers = await _httpClient.GetFromJsonAsync<IEnumerable<CustomerDto>>("api/customer") ?? [];
       Employees = await _httpClient.GetFromJsonAsync<IEnumerable<EmployeeDto>>("api/employee") ?? [];
-      ServiceType = await _httpClient.GetFromJsonAsync<IEnumerable<ServiceTypeDto>>("api/servicetype") ?? [];
       StatusType = await _httpClient.GetFromJsonAsync<IEnumerable<StatusDto>>("api/status") ?? [];
     }
     [Parameter]
@@ -23,47 +20,41 @@ namespace Pressentation_WebApp.Pages
 
     private IEnumerable<CustomerDto>? Customers { get; set; }
     private IEnumerable<EmployeeDto>? Employees { get; set; }
-    private IEnumerable<ServiceTypeDto>? ServiceType { get; set; }
     private IEnumerable<StatusDto>? StatusType { get; set; }
 
     private ProjectDto? Project { get; set; } = new();
     private string? message;
-    //private int SelectedServiceId { get; set; } = 0;
-    //private List<int> SelectedServiceIds { get; set; } = [];
+    private readonly List<ValidationResult> validationResults = [];
 
     public async Task CreateProject()
     {
       if (Project == null)
         return;
-
-      var validationContext = new ValidationContext(Project);
-      List<ValidationResult> validationResults = [];
-      //bool isValid = 
-      Validator.TryValidateObject(Project, validationContext, validationResults, true);
-      //if (!isValid)
-      //{
-      //  message = "Project inhåller ogiltiga värden!";
-      //  return;
-      //}
-
-      var postTask = await _httpClient.PostAsJsonAsync("api/projects/create-project", Project);
-      if (!postTask.IsSuccessStatusCode)
+      try
       {
-        message = "Projektet kunde inte skapas korrekt";
-        return;
-      }
+        var validationContext = new ValidationContext(Project);
+        Validator.TryValidateObject(Project, validationContext, validationResults, true);
 
-      var createdProject = await postTask.Content.ReadFromJsonAsync<ProjectDto>();
-      var postTasdk = await _httpClient.PostAsJsonAsync($"api/projectservice/{createdProject.Id}", Services);
-      if (!postTasdk.IsSuccessStatusCode)
+        var postTask = await _httpClient.PostAsJsonAsync("api/projects/create-project", Project);
+        postTask.EnsureSuccessStatusCode();
+
+        var createdProject = await postTask.Content.ReadFromJsonAsync<ProjectDto>();
+        postTask = await _httpClient.PostAsJsonAsync($"api/projectservice/{createdProject!.Id}", Services);
+        postTask.EnsureSuccessStatusCode();
+
+        Project = new();
+        Services = [];
+        message = "projekt skapat";
+      }
+      catch (HttpRequestException httpEx)
       {
-        message = "Något gick fel vid skapandet av tjänster";
-        return;
+        message = $"Nätverksfel: {httpEx.Message}";
       }
-
-      Project = new();
-      Services = [];
-      message = "projekt skapat";
+      catch (Exception ex)
+      {
+        Debug.WriteLine(ex.Message);
+        message = $"Ett oväntat fel inträffade";
+      }
 
     }
   }

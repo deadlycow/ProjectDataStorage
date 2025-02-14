@@ -8,7 +8,6 @@
     <EditForm Model="Project" OnValidSubmit="SaveChangesAsync">
         <DataAnnotationsValidator />
         <ValidationSummary />
-
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label class="form-label">Projektnummer</label>
@@ -16,7 +15,7 @@
             </div>
             <div class="col-md-6 mb-3">
                 <label class="form-label">Projekt</label>
-                <input type="text" class="form-control" @bind="Project.ProjectName" disabled="@(isEditing == false)" />
+                <input type="text" class="form-select" @bind="Project.ProjectName" disabled="@(isEditing == false)" />
             </div>
         </div>
         <div class="row">
@@ -32,7 +31,7 @@
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label class="form-label">Kund</label>
-                <select type="text" class="form-control" @bind="Project.CustomerId" disabled="@(isEditing == false)">
+                <select type="text" class="form-select" @bind="Project.CustomerId" disabled="@(isEditing == false)">
                     @if (Customers != null)
                     {
                         @foreach (var customer in Customers)
@@ -48,7 +47,7 @@
             </div>
             <div class="col-md-6 mb-3">
                 <label class="form-label">Anställd</label>
-                <select type="text" class="form-control" @bind="Project.EmployeeId" disabled="@(isEditing == false)">
+                <select type="text" class="form-select" @bind="Project.EmployeeId" disabled="@(isEditing == false)">
                     @if (Employees != null)
                     {
                         @foreach (var employee in Employees)
@@ -66,7 +65,7 @@
         <div class="row">
             <div class="col-md-6">
                 <label class="form-label">Status</label>
-                <select class="form-control" @bind="Project.StatusTypeId" disabled="@(isEditing == false)">
+                <select class="form-select" @bind="Project.StatusTypeId" disabled="@(isEditing == false)">
                     @if (Status != null && Status.Any())
                         @foreach (var stat in Status)
                         {

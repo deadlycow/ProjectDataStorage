@@ -4,7 +4,6 @@ using Business.Interfaces;
 using Business.Models;
 using Data.Interfaces;
 using System.Diagnostics;
-using System.Net.Http.Headers;
 
 namespace Business.Services;
 public class CustomerService(ICustomerRepository customerRepository) : ICustomerService

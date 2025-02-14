@@ -9,8 +9,6 @@ public static class ProjectServiceFactory
     ProjectId = dto.ProjectId,
     ServiceId = dto.ServiceId,
   };
-  public static IEnumerable<ProjectServiceEntity> Create(IEnumerable<ProjectServiceDto> dtos) => dtos.Select(Create).ToList();
-
   public static IEnumerable<ProjectServiceEntity> Create(int id, List<ProjectServiceDto> dtoList)
   {
     return dtoList.Select(dto => new ProjectServiceEntity
@@ -19,5 +17,5 @@ public static class ProjectServiceFactory
       ServiceId = dto.ServiceId,
     }).ToList();
   }
-  //public static IEnumerable<ProjectServiceEntity> Create(IEnumerable<ProjectServiceDto> dtos) => dtos.Select(Create).ToList();
+  public static IEnumerable<ProjectServiceEntity> Create(IEnumerable<ProjectServiceDto> dtos) => dtos.Select(Create).ToList();
 }

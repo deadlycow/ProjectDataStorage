@@ -39,7 +39,7 @@ public abstract class BaseRepository<TEntity>(ContextDb context) : IBaseReposito
     catch (Exception ex)
     {
       Debug.WriteLine($"Error fetching entities: {ex.Message}");
-      return []; // ändrat från null till []
+      return [];
     }
   }
   public async Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>> predicate, Func<IQueryable<TEntity>, IQueryable<TEntity>>? includeExpression = null)

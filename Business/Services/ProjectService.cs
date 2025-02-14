@@ -85,9 +85,7 @@ public class ProjectService(IProjectRepository repository) : IProjectService
   {
     try
     {
-      var respons = await _repository.GetAllAsync(
-        query => query
-        .Include(p => p.StatusType));
+      var respons = await _repository.GetAllAsync();
 
       if (respons == null || !respons.Any())
         return Result.NotFound("No projects found");

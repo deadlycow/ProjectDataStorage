@@ -4,10 +4,8 @@
 
 <h3 class="mb-4">@message</h3>
 
-
 <EditForm Model="Project" OnValidSubmit="CreateProject">
     <DataAnnotationsValidator />
-
     <div class="row">
         <div class="col-md-6 mb-3">
             <label class="form-label">Projektnamn</label>
@@ -32,7 +30,7 @@
                 <label class="form-label mb-0">Kund</label>
                 <button class="btn btn-light btn-sm mb-2" type="button">Lägg till ny +</button>
             </div>
-            <select @bind="Project.CustomerId" class="form-control col-md-12">
+            <select @bind="Project.CustomerId" class="form-select col-md-12">
                 <option value="0" selected disabled>Välj kund..</option>
                 @if (Customers is not null && Customers.Count() > 0)
                 {
@@ -53,7 +51,7 @@
                 <label class="form-label mb-0">Projektansvarig</label>
                 <button class="btn btn-light btn-sm mb-2" type="button">Lägg till ny +</button>
             </div>
-            <select @bind="Project.EmployeeId" class="form-control col-md-12">
+            <select @bind="Project.EmployeeId" class="form-select col-md-12">
                 <option value="0" selected disabled>Välj anställd..</option>
                 @if (Employees is not null && Employees.Count() > 0)
                 {
@@ -73,7 +71,7 @@
     <div class="row">
         <div class="col-md-6">
             <label class="form-label">Status</label>
-            <select @bind="Project.StatusTypeId" class="form-control mb-3 col-md-12">
+            <select @bind="Project.StatusTypeId" class="form-select mb-3 col-md-12">
                 <option value="0" disabled>Välj en status..</option>
                 @if (StatusType is not null && StatusType.Count() > 0)
                 {
@@ -88,43 +86,8 @@
                 }
             </select>
             <ValidationMessage For="@(() => Project.StatusTypeId)" />
-
             <button type="submit" class="btn btn-primary">Skapa projekt</button>
         </div>
         <AddServices IsEditing="true" ProjectServices="Services" />
     </div>
-
-
-    @* <div class="mb-3"> *@
-    @*     <label class="form-label">Tjänster</label> *@
-    @*     <select @bind="SelectedServiceId" class="form-control mb-3 col-md-12"> *@
-    @*         <option value="0" disabled>Välj tjänst..</option> *@
-    @*         @if (ServiceType is not null && ServiceType.Count() > 0) *@
-    @*         { *@
-    @*             @foreach (var service in ServiceType) *@
-    @*             { *@
-    @*                 <option value="@service.Id">@($"{service.Name} - {service.Price:0} kr")</option> *@
-    @*             } *@
-    @*         } *@
-    @*         else *@
-    @*         { *@
-    @*             <option disabled>Laddar Tjänster..</option> *@
-    @*         } *@
-    @*     </select> *@
-
-    @*     <button type="button" class="btn btn-primary" @onclick="AddService">Lägg till</button> *@
-
-    @*     <h5>Valda tjänster:</h5> *@
-    @*     <ul> *@
-    @*         @if (SelectedServiceIds is not null && SelectedServiceIds.Count > 0) *@
-    @*         { *@
-    @*             @foreach (var id in SelectedServiceIds) *@
-    @*             { *@
-    @*                 <li>Tjänst ID: @id</li> *@
-    @*             } *@
-    @*         } *@
-    @*     </ul> *@
-    @* </div> *@
-
-
 </EditForm>

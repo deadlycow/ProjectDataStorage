@@ -15,7 +15,6 @@ public class ProjectFactory
     CustomerId = entity.CustomerId,
     EmployeeId = entity.EmployeeId,
     StatusTypeId = entity.StatusTypeId,
-    //StatusTypeName = entity.StatusType.Name,
   };
   public static IEnumerable<ProjectDto> CreateList(IEnumerable<ProjectEntity> entities) => entities.Select(Create).ToList();
 
@@ -48,10 +47,6 @@ public class ProjectFactory
     CustomerId = reg.CustomerId,
     EmployeeId = reg.EmployeeId,
     StatusTypeId = reg.StatusTypeId,
-    //ProjectService = reg.ServiceTypeIds.Select(id => new ProjectServiceEntity
-    //{
-    //  ServiceId = id,
-    //}).ToList(),
   };
   public static ProjectDto Update(ProjectDetails update) => new()
   {
@@ -62,7 +57,6 @@ public class ProjectFactory
     CustomerId = update.CustomerId,
     EmployeeId = update.EmployeeId,
     StatusTypeId = update.StatusTypeId,
-    //ServiceTypeIds = update.Services.Select(s => s.Id ).ToList(),
   };
   public static ProjectEntity Update(ProjectDto reg) => new()
   {

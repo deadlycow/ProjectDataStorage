@@ -1,45 +1,53 @@
 ﻿<div class="mb-3 col-md-6">
 
-    <label class="form-label">Tjänst/er</label>
-    <div class="d-flex">
-        <select class="form-control" @bind="_value">
-            <option value="0" disabled>Välj tjänst</option>
-            @if (Services != null)
-            {
-                @foreach (var service in Services)
+    @if (IsEditing)
+    {
+        <label class="form-label">Tjänst/er</label>
+        <div class="d-flex">
+            <select class="form-select" @bind="_value">
+                <option value="0" disabled>Välj tjänst</option>
+                @if (Services != null)
                 {
-                    <option value="@service.Id">@($"{service.Name} - {service.Price:0} kr")</option>
+                    @foreach (var service in Services)
+                    {
+                        <option value="@service.Id">@($"{service.Name} - {service.Price:0} kr")</option>
+                    }
                 }
-            }
-            else
-            {
-                <option>Laddar tjänster..</option>
-            }
-        </select>
-        <button type="button" class="btn btn-primary text-nowrap" @onclick="AddToList" @onclick:stopPropagation="true">Lägg till</button>
-    </div>
+                else
+                {
+                    <option>Laddar tjänster..</option>
+                }
+            </select>
+            <button type="button" class="btn btn-primary text-nowrap" @onclick="AddToList" @onclick:stopPropagation="true">Lägg till</button>
+        </div>
+    }
     <label class="form-label">Valda tjänster:</label>
-    <ul class="pl-0">
-        @if (ProjectServices.Count > 0 && Services != null)
-        {
+    @if (ProjectServices.Count > 0 && Services != null)
+    {
+        <ol class="list-group list-group-numbered">
             @foreach (var service in ProjectServices)
             {
-                <li value="id" class="list-group-item d-flex justify-content-between align-items-center">
+                <li class="list-group-item d-flex list-group-item-action">
                     @{
                         var item = Services.FirstOrDefault(s => s.Id == service.ServiceId);
-                        @($"{item!.Name} - {item.Price:0} kr")
+                        <div class="me-auto ps-2">
+                            @item!.Name
+                        </div>
+                        <div class="ms-auto pe-3">
+                            @($"{item.Price:0} kr")
+                        </div>
                     }
-                    @if (IsEditing)
-                    {
-                        <button type="button" class="badge btn-danger " @onclick="()=>RemoveFromList(service)">X</button>
-                    }
+                    <button type="button" class="btn-close" disabled="@(IsEditing == false)" @onclick="()=>RemoveFromList(service)"></button>
                 </li>
             }
-        }
-        else
-        {
+            <li>Total: @($"{TotalPrice:0}")kr</li>
+        </ol>
+    }
+    else
+    {
+        <ul class="list-group">
             <li class="list-group-item">Inga valda tjänster.</li>
-        }
-    </ul>
+        </ul>
+    }
 
 </div>

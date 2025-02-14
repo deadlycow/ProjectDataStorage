@@ -21,15 +21,18 @@ public partial class AddServices(HttpClient httpClient)
   [Parameter]
   public int Id { get; set; }
   private int _value;
+  private decimal TotalPrice => ProjectServices.Sum(ps => Services!.FirstOrDefault(s => s.Id == ps.ServiceId)?.Price ?? 0);
 
   private void AddToList()
   {
     if (_value > 0 && !ProjectServices.Any(s => s.ServiceId == _value))
-      ProjectServices.Add( new ProjectServiceDto
+    {
+      ProjectServices.Add(new ProjectServiceDto
       {
         ProjectId = Id,
         ServiceId = _value,
       });
+    }
   }
   private void RemoveFromList(ProjectServiceDto dto)
   {
