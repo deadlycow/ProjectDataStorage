@@ -1,6 +1,7 @@
 ﻿using Data.Contexts;
 using Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using System.Diagnostics;
 using System.Linq.Expressions;
 
@@ -9,14 +10,38 @@ public abstract class BaseRepository<TEntity>(ContextDb context) : IBaseReposito
 {
   protected readonly ContextDb _context = context;
   protected readonly DbSet<TEntity> _dbSet = context.Set<TEntity>();
+  private IDbContextTransaction _transaction = null!;
+
+  public async Task BeginTransactionAsync()
+  {
+    _transaction ??= await _context.Database.BeginTransactionAsync();
+  }
+
+  public async Task CommitTransactionAsync()
+  {
+    if (_transaction != null)
+    {
+      await _transaction.CommitAsync();
+      await _transaction.DisposeAsync();
+    }
+  }
+
+  public async Task RollbackTransactionAsync()
+  {
+    if (_transaction != null)
+    {
+      await _transaction.RollbackAsync();
+      await _transaction.DisposeAsync();
+      _transaction = null!;
+    }
+  }
 
   public async Task<TEntity?> CreateAsync(TEntity entity)
   {
     try
     {
       await _dbSet.AddAsync(entity);
-      var changes = await _context.SaveChangesAsync();
-      return changes > 0 ? entity : null;
+      return entity;
     }
     catch (Exception ex)
     {
@@ -59,42 +84,36 @@ public abstract class BaseRepository<TEntity>(ContextDb context) : IBaseReposito
       return null;
     }
   }
-  public async Task<bool> UpdateAsync(TEntity entity)
+  public void Update(TEntity entity)
   {
+    ArgumentNullException.ThrowIfNull(entity);
+
     try
     {
-      _dbSet.Update(entity);
-      return await _context.SaveChangesAsync() > 0;
+     _dbSet.Update(entity);
     }
     catch (Exception ex)
     {
       Debug.WriteLine($"Error updating entity: {ex.Message}");
-      return false;
+      throw;
     }
   }
-  public async Task<bool> DeleteAsync(TEntity entity)
+  public void Delete(TEntity entity)
   {
+    ArgumentNullException.ThrowIfNull(entity);
     try
     {
       _dbSet.Remove(entity);
-      return await _context.SaveChangesAsync() > 0;
     }
     catch (Exception ex)
     {
       Debug.WriteLine($"Error deleting entity: {ex.Message}");
-      return false;
+      throw;
     }
   }
-  public async Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> predicate)
+
+  public async Task<int> SaveAsync()
   {
-    try
-    {
-      return await _dbSet.AnyAsync(predicate);
-    }
-    catch (Exception ex)
-    {
-      Debug.WriteLine($"Error checking entity existence: {ex.Message}");
-      return false;
-    }
+    return await _context.SaveChangesAsync();
   }
 }

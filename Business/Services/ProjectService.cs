@@ -14,25 +14,37 @@ public class ProjectService(IProjectRepository repository) : IProjectService
   public async Task<IResult> CreateAsync(ProjectDto project)
   {
     if (project == null)
-      return Result.BadRequest("Project is null");
+      return Result.BadRequest("Project cannot be null");
+
+    var entity = ProjectFactory.Create(project);
+    if (entity == null)
+      return Result.InternalServerError("Failed to convert ProjectDto to entity");
+
+    await _repository.BeginTransactionAsync();
     try
     {
-      var entity = ProjectFactory.Create(project);
-      if (entity == null)
-        return Result.InternalServerError("Failed to process project to entity");
-
       var response = await _repository.CreateAsync(entity);
-      if (response != null)
+      if (response == null)
       {
-        var dto = ProjectFactory.Create(response); 
-        return Result<ProjectDto>.Created(dto);
+        await _repository.RollbackTransactionAsync();
+        return Result.BadRequest("Failed to create project in database");
       }
 
-      return Result.BadRequest("Error creating project");
+      var affectedRows = await _repository.SaveAsync();
+      if (affectedRows == 0)
+      {
+        await _repository.RollbackTransactionAsync();
+        return Result.InternalServerError("No changes saved to the database");
+      }
+
+      await _repository.CommitTransactionAsync();
+      return Result<ProjectDto>.Created(ProjectFactory.Create(response));
+
     }
     catch (Exception ex)
     {
-      Debug.WriteLine(ex);
+      await _repository.RollbackTransactionAsync();
+      Debug.WriteLine($"Error creating project: {ex.Message}");
       return Result.InternalServerError("An unexpected error occurred while creating project");
     }
   }
@@ -69,17 +81,33 @@ public class ProjectService(IProjectRepository repository) : IProjectService
   }
   public async Task<IResult> UpdateAsync(ProjectDto dto)
   {
-    if (dto != null)
+    if (dto == null)
+      return Result.BadRequest("Project cannot be null");
+
+    var entity = ProjectFactory.Update(dto);
+    if (entity == null)
+      return Result.BadRequest("Failed to convert ProjectDto to entity");
+
+    await _repository.BeginTransactionAsync();
+    try
     {
-      var entity = ProjectFactory.Update(dto);
+      _repository.Update(entity);
+      var affectedRows = await _repository.SaveAsync();
+      if (affectedRows == 0)
+      {
+        await _repository.RollbackTransactionAsync();
+        return Result.InternalServerError("No changes saved to the database");
+      }
 
-      var response = await _repository.UpdateAsync(entity);
-
-      if (response)
-        return Result.Ok();
+      await _repository.CommitTransactionAsync();
+      return Result.Ok();
     }
-
-    return Result.BadRequest("Failed to update");
+    catch(Exception ex) 
+    {
+      await _repository.RollbackTransactionAsync();
+      Debug.WriteLine($"Error updating project: {ex.Message}");
+      return Result.InternalServerError("An errro occurred while updating the project");
+    }
   }
   public async Task<IResult> GetAllAsync()
   {
@@ -102,23 +130,34 @@ public class ProjectService(IProjectRepository repository) : IProjectService
   public async Task<IResult> DeleteAsync(string projecNumber)
   {
     if (string.IsNullOrWhiteSpace(projecNumber))
-      return Result.BadRequest("ID cannot be empty or whitespace");
+      return Result.BadRequest("Project number cannot be empty");
+
+    await _repository.BeginTransactionAsync();
     try
     {
-      var response = await _repository.GetAsync(x => x.ProjectNumber == projecNumber);
-      if (response == null)
-        return Result.NotFound($"Project with ID {projecNumber} not found");
+      var project = await _repository.GetAsync(x => x.ProjectNumber == projecNumber);
+      if (project == null)
+      {
+        await _repository.RollbackTransactionAsync();
+        return Result.NotFound($"Project with number {projecNumber} not found");
+      }  
 
-      var isDeleted = await _repository.DeleteAsync(response);
-      if (!isDeleted)
-        return Result.InternalServerError($"Failed to delete project with ID {projecNumber}");
+      _repository.Delete(project);
+      var affectedRows = await _repository.SaveAsync();
+      if (affectedRows == 0)
+      {
+        await _repository.RollbackTransactionAsync();
+        return Result.InternalServerError("No changes saved to the database");
+      }
 
+      await _repository.CommitTransactionAsync();
       return Result.Ok();
     }
     catch (Exception ex)
     {
-      Debug.WriteLine($"Error deleting project {projecNumber}: {ex}");
-      return Result.InternalServerError($"{ex}");
+      await _repository.RollbackTransactionAsync();
+      Debug.WriteLine($"Error deleting project {projecNumber}: {ex.Message}");
+      return Result.InternalServerError("An error occurred while deleting the project");
     }
   }
 }

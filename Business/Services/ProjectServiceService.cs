@@ -16,30 +16,37 @@ public class ProjectServiceService(IProjectServiceRepository repository) : IProj
   }
   public async Task<IResult> CreateList(int id, List<ProjectServiceDto> listDto)
   {
+    if (id < 1)
+      return Result.BadRequest("Id is 0");
+
+    await _repository.BeginTransactionAsync();
     try
     {
       var existingServices = await _repository.GetAllAsync(q => q.Where(s => s.ProjectId == id));
 
-      if (existingServices != null && existingServices.Any())
+      if (existingServices?.Any() == true)
       {
-        await _repository.RemoveListAsync(existingServices);
-        var response = await _repository.CreateListAsync(ProjectServiceFactory.Create(listDto));
-        if (response)
-          return Result.Ok();
-      }
-      else
-      {
-        var result = await _repository.CreateListAsync(ProjectServiceFactory.Create(id, listDto));
-        if (result)
-          return Result.Ok();
+        _repository.RemoveList(existingServices);
       }
 
-      return Result.AlreadyExists("No changes made");
+      var newServices = ProjectServiceFactory.Create(id, listDto);
+      _repository.CreateListAsync(newServices);
+
+      var affectedRows = await _repository.SaveAsync();
+      if (affectedRows == 0)
+      {
+        await _repository.RollbackTransactionAsync();
+        return Result.InternalServerError("No changes were saved to the database");
+      }
+
+      await _repository.CommitTransactionAsync();
+      return Result.Ok();
     }
     catch (Exception ex)
     {
-      Debug.WriteLine(ex.Message);
-      return Result.InternalServerError("Something broke");
+      await _repository.RollbackTransactionAsync();
+      Debug.WriteLine($"Error creating service list for Project ID {id}: {ex.Message}");
+      return Result.InternalServerError("An unexpected error occurred");
     }
   }
 
@@ -60,22 +67,36 @@ public class ProjectServiceService(IProjectServiceRepository repository) : IProj
 
   public async Task<IResult> Remove(int id, List<ProjectServiceDto> listDto)
   {
+    if (id < 1)
+      return Result.BadRequest("Invalid project ID");
+
+    await _repository.BeginTransactionAsync();
     try
     {
       var existingServices = await _repository.GetAllAsync(q => q.Where(s => s.ProjectId == id));
 
-      if (existingServices != null)
+      if (existingServices == null || !existingServices.Any())
       {
-        var response = await _repository.RemoveListAsync(existingServices);
-        if (response)
-          return Result.Ok();
+        await _repository.RollbackTransactionAsync();
+        return Result.NotFound($"No services found for project ID {id}");
       }
-      return Result.AlreadyExists("No changes made");
+
+      _repository.RemoveList(existingServices);
+      var affectedRows = await _repository.SaveAsync();
+
+      if (affectedRows == 0)
+      {
+        await _repository.CommitTransactionAsync();
+        return Result.InternalServerError("No changes saved to the database");
+      }
+      await _repository.CommitTransactionAsync();
+      return Result.Ok();
     }
     catch (Exception ex)
     {
+      await _repository.RollbackTransactionAsync();
       Debug.WriteLine(ex.Message);
-      return Result.InternalServerError("Something broke");
+      return Result.InternalServerError("An unexpected error occurred");
     }
   }
 
