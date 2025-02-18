@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using System.Net.Http.Json;
 
-namespace Pressentation_WebApp.Components;
+namespace Pressentation_WebApp.Components.Shared;
 public partial class AddServices(HttpClient httpClient)
 {
   private readonly HttpClient _httpClient = httpClient;
@@ -12,14 +12,10 @@ public partial class AddServices(HttpClient httpClient)
     Services = await _httpClient.GetFromJsonAsync<IEnumerable<ServiceTypeDto>>("api/servicetype") ?? [];
   }
 
-  [Parameter]
-  public IEnumerable<ServiceTypeDto>? Services { get; set; }
-  [Parameter]
-  public bool IsEditing { get; set; } = false;
-  [Parameter]
-  public List<ProjectServiceDto> ProjectServices { get; set; } = [];
-  [Parameter]
-  public int Id { get; set; }
+  [Parameter] public IEnumerable<ServiceTypeDto>? Services { get; set; }
+  [Parameter] public bool IsEditing { get; set; } = false;
+  [Parameter] public List<ProjectServiceDto> ProjectServices { get; set; } = [];
+  [Parameter] public int Id { get; set; }
   private int _value;
   private decimal TotalPrice => ProjectServices.Sum(ps => Services!.FirstOrDefault(s => s.Id == ps.ServiceId)?.Price ?? 0);
 

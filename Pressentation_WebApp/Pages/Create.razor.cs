@@ -25,6 +25,7 @@ namespace Pressentation_WebApp.Pages
     private ProjectDto? Project { get; set; } = new();
     private string? message;
     private readonly List<ValidationResult> validationResults = [];
+    private bool created = false;
 
     public async Task CreateProject()
     {
@@ -45,6 +46,7 @@ namespace Pressentation_WebApp.Pages
         Project = new();
         Services = [];
         message = "projekt skapat";
+        created = true;
       }
       catch (HttpRequestException httpEx)
       {
@@ -56,6 +58,10 @@ namespace Pressentation_WebApp.Pages
         message = $"Ett oväntat fel inträffade";
       }
 
+    }
+    public void HandleDialogConfirmation()
+    {
+      created = false;
     }
   }
 }

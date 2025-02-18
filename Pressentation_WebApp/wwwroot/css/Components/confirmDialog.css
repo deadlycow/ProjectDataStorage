@@ -1,4 +1,4 @@
-﻿.modal-overlay {
+﻿.model-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -10,7 +10,7 @@
     justify-content: center;
 }
 
-.modal-content {
+.model-content {
     background-color: #212529 !important;
     padding: 20px;
     border-radius: 8px;

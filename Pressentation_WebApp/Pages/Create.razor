@@ -1,6 +1,7 @@
 ﻿@page "/create"
 @layout MainLayout
 @using Pressentation_WebApp.Components;
+@using Pressentation_WebApp.Components.Shared;
 
 <h3 class="mb-4">@message</h3>
 
@@ -89,5 +90,9 @@
             <button type="submit" class="btn btn-primary">Skapa projekt</button>
         </div>
         <AddServices IsEditing="true" ProjectServices="Services" />
+        @if (created)
+        {
+            <ConfirmDialog ModelType="ModelType.Information" Title="Skapande bekräftat" Message="Projektet har skapats med framgång!" OnConfirmed="HandleDialogConfirmation" />
+        }
     </div>
 </EditForm>

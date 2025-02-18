@@ -1,5 +1,5 @@
 ﻿@page "/details/{projectNumber}"
-@using Pressentation_WebApp.Components;
+@using Pressentation_WebApp.Components.Shared;
 
 <h3 class="mb-4">Projektinformation</h3>
 
@@ -88,7 +88,7 @@
                     </div>
                 </div>
             </div>
-            <Pressentation_WebApp.Components.AddServices IsEditing="isEditing" ProjectServices="ServiceList" Id="Id" />
+            <AddServices IsEditing="isEditing" ProjectServices="ServiceList" Id="Id" />
         </div>
     </EditForm>
 }

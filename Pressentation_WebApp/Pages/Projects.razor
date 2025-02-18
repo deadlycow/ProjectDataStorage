@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using Pressentation_WebApp.Components;
 
 @if (ProjectsList == null)
 {
@@ -44,6 +45,6 @@ else
     </table>
     @if (showConfirmDialog)
     {
-        <Pressentation_WebApp.Components.ConfirmDialog OnConfirmed="DeleteProject" />
+        <ConfirmDialog ModelType="ModelType.Confirmation" OnConfirmed="DeleteProject" />
     }
 }
