@@ -21,3 +21,8 @@
 .list-group-item {
     color: black;
 }
+
+thead {
+    display: table-header-group;
+    border-bottom: 1px solid #dee2e6 !important;
+}

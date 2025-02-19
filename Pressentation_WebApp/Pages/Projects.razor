@@ -36,8 +36,8 @@ else
                             @("Ingen status laddad")
                         }
                     </td>
-                    <td>
-                        <button class="btn btn-danger" @onclick="() => ConfirmDelete(project.ProjectNumber!)" @onclick:stopPropagation="true">Delete</button>
+                    <td class="text-end">
+                        <button class="btn btn-danger btn-sm" @onclick="() => ConfirmDelete(project.ProjectNumber!)" @onclick:stopPropagation="true">Ta bort</button>
                     </td>
                 </tr>
             }

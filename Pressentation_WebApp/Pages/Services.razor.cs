@@ -17,8 +17,9 @@ public partial class Services(NavigationManager navigationManager, HttpClient ht
 
   private IEnumerable<ServiceTypeDto>? ServiceList { get; set; }
   private bool showConfirmDialog = false;
-  private int employeeToDelete;
-  private async Task DeleteProject(bool confirm)
+  private int serviceToDelete;
+  private ServiceTypeDto? ServiceType { get; set; } = new();
+  private async Task DeleteService(bool confirm)
   {
     showConfirmDialog = false;
 
@@ -27,7 +28,7 @@ public partial class Services(NavigationManager navigationManager, HttpClient ht
 
     try
     {
-      var response = await _httpClient.DeleteAsync($"api/servicetype/{employeeToDelete}");
+      var response = await _httpClient.DeleteAsync($"api/servicetype/{serviceToDelete}");
       response.EnsureSuccessStatusCode();
 
       ServiceList = await _httpClient.GetFromJsonAsync<IEnumerable<ServiceTypeDto>>("api/servicetype");
@@ -43,7 +44,12 @@ public partial class Services(NavigationManager navigationManager, HttpClient ht
   }
   private void ConfirmDelete(int employeeId)
   {
-    employeeToDelete = employeeId;
+    serviceToDelete = employeeId;
     showConfirmDialog = true;
+  }
+  private async Task LoadServices()
+  {
+    ServiceList = await _httpClient.GetFromJsonAsync<IEnumerable<ServiceTypeDto>>("api/servicetype");
+    StateHasChanged();
   }
 }
