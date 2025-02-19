@@ -18,4 +18,10 @@ public static class ServiceTypeFactory
     Name = dto.Name,
     Price = dto.Price,
   };
+  public static ServiceEntity Update(ServiceTypeDto dto) => new()
+  {
+    Id = dto.Id,
+    Name = dto.Name,
+    Price = dto.Price,
+  };
 }

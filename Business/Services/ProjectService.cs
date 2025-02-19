@@ -106,7 +106,7 @@ public class ProjectService(IProjectRepository repository) : IProjectService
     {
       await _repository.RollbackTransactionAsync();
       Debug.WriteLine($"Error updating project: {ex.Message}");
-      return Result.InternalServerError("An errro occurred while updating the project");
+      return Result.InternalServerError("An error occurred while updating the project");
     }
   }
   public async Task<IResult> GetAllAsync()

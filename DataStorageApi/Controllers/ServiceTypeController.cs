@@ -68,5 +68,23 @@ namespace DataStorageApi.Controllers
         return StatusCode(500, ex.Message);
       }
     }
+    [HttpPut]
+    public async Task<IActionResult> UpdateService(ServiceTypeDto dto)
+    {
+      if (dto == null)
+        return BadRequest("UpdateService data is required");
+      try
+      {
+        var result = await _serviceTypeService.UpdateAsync(dto);
+        if (result.Success)
+          return Ok();
+
+        return BadRequest(result.ErrorMessage);
+      }
+      catch (Exception ex)
+      {
+        return StatusCode(500, ex.Message);
+      }
+    }
   }
 }

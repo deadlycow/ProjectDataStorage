@@ -17,6 +17,7 @@ public partial class Services(NavigationManager navigationManager, HttpClient ht
 
   private IEnumerable<ServiceTypeDto>? ServiceList { get; set; }
   private bool showConfirmDialog = false;
+  private bool showService = false;
   private int serviceToDelete;
   private ServiceTypeDto? ServiceType { get; set; } = new();
   private async Task DeleteService(bool confirm)
@@ -51,5 +52,32 @@ public partial class Services(NavigationManager navigationManager, HttpClient ht
   {
     ServiceList = await _httpClient.GetFromJsonAsync<IEnumerable<ServiceTypeDto>>("api/servicetype");
     StateHasChanged();
+  }
+  private void OpenEditDialog(ServiceTypeDto service)
+  {
+    ServiceType = service;
+    showService = true;
+  }
+
+  private async Task UpdateService(ServiceTypeDto updatedService)
+  {
+    if (updatedService == null)
+      return;
+    try
+    {
+      var response = await _httpClient.PutAsJsonAsync("api/servicetype", updatedService);
+      response.EnsureSuccessStatusCode();
+      await LoadServices();
+    }
+    catch (Exception ex)
+    {
+      Debug.WriteLine($"Ett fel uppstod vid uppdatering: {ex.Message}");
+    }
+    showService = false;
+  }
+  private void CloseEditDialog()
+  {
+    showService = false;
+    ServiceType = null;
   }
 }

@@ -1,4 +1,4 @@
-﻿.model-overlay {
+﻿.edit-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -10,32 +10,13 @@
     justify-content: center;
 }
 
-.model-content {
+.edit-content {
     background-color: #212529 !important;
     padding: 20px;
     border-radius: 8px;
-    text-align: center;
     color: white;
 }
 
-.button-group {
-    margin-top: 20px;
-    display: flex;
-    justify-content: space-evenly;
-}
-
-.confirm {
-    background: red;
-    color: white;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-}
-
-.cancel {
-    background: gray;
-    color: white;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
+.center-title{
+    text-align:center;
 }

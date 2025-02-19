@@ -100,8 +100,30 @@ public class ServiceTypeService(IServiceRepository repository) : IServiceTypeSer
     throw new NotImplementedException();
   }
 
-  public Task<IResult> UpdateAsync(ServiceTypeDto entity)
+  public async Task<IResult> UpdateAsync(ServiceTypeDto dto)
   {
-    throw new NotImplementedException();
+    if (dto == null)
+      return Result.BadRequest("Service cannot be null");
+    var entity = ServiceTypeFactory.Update(dto);
+    if (entity == null)
+      return Result.BadRequest("Failed to convert ServiceTypeDto to entity");
+    await _repository.BeginTransactionAsync();
+    try
+    {
+      _repository.Update(entity);
+      var affectedRows = await _repository.SaveAsync();
+      if (affectedRows == 0)
+      {
+        await _repository.RollbackTransactionAsync();
+        return Result.InternalServerError("No changes saved to the database");
+      }
+      await _repository.CommitTransactionAsync();
+      return Result.Ok();
+    }
+    catch (Exception ex) {
+      await _repository.RollbackTransactionAsync();
+      Debug.WriteLine($"Error updating service: {ex.Message}");
+      return Result.InternalServerError("An error occurred while updateing the service");
+    }
   }
 }

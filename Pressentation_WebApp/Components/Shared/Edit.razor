@@ -1,0 +1,27 @@
+﻿@inject Microsoft.AspNetCore.Components.NavigationManager Navigation
+@using Pressentation_WebApp.Components;
+
+<div class="edit-overlay" @onclick="Close">
+    <div class="edit-content p-4" @onclick:stopPropagation="true">
+
+
+        <h3 class="center-title mb-3">Uppdater tjänst</h3>
+        <div class="row">
+            <div>
+                <label class="form-label">Tjänst</label>
+                <input class="form-control" type="text" @bind="Service.Name" />
+            </div>
+            <div>
+                <label class="form-label">Pris</label>
+                <input class="form-control" type="text" @bind="Service.Price" />
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button class="btn btn-success" @onclick="Confirm">Spara</button>
+            <button class="btn btn-secondary" @onclick="Close">Avbryt</button>
+        </div>
+
+
+    </div>
+</div>

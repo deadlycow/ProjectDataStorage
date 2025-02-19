@@ -18,7 +18,7 @@
         @if (ServiceList != null && ServiceList.Any())
             @foreach (var service in ServiceList)
             {
-                <tr class="tr-mouse">
+                <tr class="tr-mouse" @onclick="() => OpenEditDialog(service)">
                     <td>@service.Id</td>
                     <td>@service.Name</td>
                     <td>@($"{service.Price:0}") kr</td>
@@ -32,6 +32,9 @@
             <tr>
                 <td>Laddar antställda..</td>
             </tr>
+        }
+        @if (showService){
+            <Edit service="ServiceType" OnConfirmed="UpdateService" OnClose="CloseEditDialog"/>
         }
     </tbody>
 
