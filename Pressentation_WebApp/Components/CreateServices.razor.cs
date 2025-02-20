@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 using System.Diagnostics;
 using System.Net.Http.Json;
 
-namespace Pressentation_WebApp.Components.Shared;
+namespace Pressentation_WebApp.Components;
 public partial class CreateServices(HttpClient httpClient)
 {
   private readonly HttpClient _httpClient = httpClient;
@@ -20,10 +20,12 @@ public partial class CreateServices(HttpClient httpClient)
     {
       var postTask = await _httpClient.PostAsJsonAsync($"api/servicetype", ServiceType);
       postTask.EnsureSuccessStatusCode();
+
       await OnServiceAdded.InvokeAsync();
       ServiceType = new();
     }
-    catch (HttpRequestException httpEx) {
+    catch (HttpRequestException httpEx)
+    {
       message = $"Nätverksfel: {httpEx.Message}";
     }
     catch (Exception ex)

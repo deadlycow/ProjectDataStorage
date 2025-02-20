@@ -9,6 +9,10 @@ public static class CustomerFactory
     Id = entity.Id,
     Name = entity.Name,
   };
-
   public static IEnumerable<CustomerDto> CreateList(IEnumerable<CustomerEntity> entities) => entities.Select(Create);
+  public static CustomerEntity Create(CustomerDto entity) => new()
+  {
+    Name = entity.Name,
+  };
+  
 }

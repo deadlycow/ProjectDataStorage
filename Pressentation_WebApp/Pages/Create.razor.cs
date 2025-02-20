@@ -22,7 +22,7 @@ namespace Pressentation_WebApp.Pages
     private IEnumerable<EmployeeDto>? Employees { get; set; }
     private IEnumerable<StatusDto>? StatusType { get; set; }
 
-    private ProjectDto? Project { get; set; } = new();
+    private ProjectDto? Project { get; set; } = new() { StartDate = DateOnly.FromDateTime(DateTime.Now)};
     private string? message;
     private readonly List<ValidationResult> validationResults = [];
     private bool created = false;
@@ -43,7 +43,7 @@ namespace Pressentation_WebApp.Pages
         postTask = await _httpClient.PostAsJsonAsync($"api/projectservice/{createdProject!.Id}", Services);
         postTask.EnsureSuccessStatusCode();
 
-        Project = new();
+        Project = new() { StartDate = DateOnly.FromDateTime(DateTime.Now)};
         Services = [];
         message = "projekt skapat";
         created = true;

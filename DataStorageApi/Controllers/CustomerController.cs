@@ -1,7 +1,6 @@
 ﻿using Business.Dto;
 using Business.Interfaces;
 using Business.Models;
-using Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DataStorageApi.Controllers;
@@ -15,11 +14,62 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
   [HttpGet]
   public async Task<IActionResult> GetAll()
   {
-    var response = await _customerService.GetAllAsync();
-    
-    if (response is Result<IEnumerable<CustomerDto>> customers)
-      return Ok(customers.Data);
+    try
+    {
+      var response = await _customerService.GetAllAsync();
 
-    return BadRequest(response);
+      if (response is Result<IEnumerable<CustomerDto>> customers)
+      {
+        if (customers.Data == null || !customers.Data.Any())
+          return NoContent();
+        return Ok(customers.Data);
+      }
+
+      return BadRequest(response);
+    }
+    catch (Exception ex)
+    {
+      return StatusCode(500, ex.Message);
+    }
   }
+  [HttpPost]
+  public async Task<IActionResult> Create(CustomerDto dto)
+  {
+    if (dto == null)
+      return BadRequest("Customer data is required");
+    try
+    {
+      var response = await _customerService.CreateAsync(dto);
+      if (response.Success)
+        return Ok();
+
+      return BadRequest(response.ErrorMessage);
+    }
+    catch (Exception ex)
+    {
+      return StatusCode(500, ex.Message);
+    }
+  }
+  [HttpDelete("{id}")]
+  public async Task<IActionResult> DeleteCustomer(int id)
+  {
+    if (id < 1)
+      return BadRequest("Invalid number range");
+    try
+    {
+      var result = await _customerService.DeleteAsync(id);
+      return result.StatusCode switch
+      {
+        200 => Ok(),
+        400 => BadRequest(result.ErrorMessage),
+        404 => NotFound(result.ErrorMessage),
+        _ => StatusCode(500, result.ErrorMessage)
+      };
+    }
+    catch (Exception ex)
+    {
+      return StatusCode(500, ex.Message);
+    }
+  }
+
 }

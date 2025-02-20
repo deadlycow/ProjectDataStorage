@@ -92,6 +92,7 @@ public class ProjectsController(IProjectService projectService) : ControllerBase
       if (response.Success && response is Result<ProjectDto> item)
         return Ok(item.Data);
 
+
       return BadRequest(response.ErrorMessage);
     }
     catch (Exception ex)
@@ -100,7 +101,7 @@ public class ProjectsController(IProjectService projectService) : ControllerBase
     }
   }
   [HttpPut]
-  public async Task<IActionResult> UpdateProject([FromBody]ProjectDetails form)
+  public async Task<IActionResult> UpdateProject([FromBody] ProjectDetails form)
   {
     if (form == null)
       return BadRequest("Project data is null");

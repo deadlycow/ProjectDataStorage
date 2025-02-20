@@ -3,12 +3,11 @@ using Microsoft.AspNetCore.Components;
 using System.Diagnostics;
 using System.Net.Http.Json;
 
-namespace Pressentation_WebApp.Pages; 
-public partial class Employees(NavigationManager navigationManager, HttpClient httpClient) : ComponentBase
+namespace Pressentation_WebApp.Pages;
+public partial class Employees(HttpClient httpClient) : ComponentBase
 {
-  private readonly NavigationManager _navigationManager = navigationManager;
   private readonly HttpClient _httpClient = httpClient;
-  
+
   protected override async Task OnInitializedAsync()
   {
     EmployeesList = await _httpClient.GetFromJsonAsync<IEnumerable<EmployeeDto>>("api/employee");

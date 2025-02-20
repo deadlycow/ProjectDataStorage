@@ -1,0 +1,12 @@
+﻿<EditForm Model="Customer" OnValidSubmit="CreateCustomers">
+    <div class="row mt-2">
+        <div class="col-md-12 mb-3">
+            <label class="form-label">Namn på kund</label>
+            <input type="text" @bind-value="Customer!.Name" class="form-control" />
+        </div>
+        <div class="col-md-4 mb-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-success">@message</button>
+        </div>
+    </div>
+</EditForm>
+

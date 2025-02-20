@@ -1,8 +1,6 @@
 ﻿@page "/services"
 @layout MainLayout
 @using Pressentation_WebApp.Components;
-@using Pressentation_WebApp.Components.Shared;
-
 
 <CreateServices OnServiceAdded="LoadServices" />
 <table class="table  table-dark table-sm table-hover">
@@ -33,11 +31,11 @@
                 <td>Laddar antställda..</td>
             </tr>
         }
-        @if (showService){
-            <Edit service="ServiceType" OnConfirmed="UpdateService" OnClose="CloseEditDialog"/>
+        @if (showService)
+        {
+            <EditServices service="ServiceType" OnConfirmed="UpdateService" OnClose="CloseEditDialog" />
         }
     </tbody>
-
 </table>
 @if (showConfirmDialog)
 {

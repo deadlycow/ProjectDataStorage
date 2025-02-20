@@ -1,8 +1,8 @@
 ﻿using Business.Dto;
 using Microsoft.AspNetCore.Components;
 
-namespace Pressentation_WebApp.Components.Shared;
-public partial class Edit
+namespace Pressentation_WebApp.Components;
+public partial class EditServices
 {
   [Parameter] public ServiceTypeDto Service { get; set; } = new();
   [Parameter] public EventCallback<ServiceTypeDto> OnConfirmed { get; set; }

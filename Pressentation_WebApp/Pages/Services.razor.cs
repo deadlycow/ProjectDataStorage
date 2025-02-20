@@ -5,9 +5,8 @@ using System.Net.Http.Json;
 
 namespace Pressentation_WebApp.Pages;
 
-public partial class Services(NavigationManager navigationManager, HttpClient httpClient) : ComponentBase
+public partial class Services(HttpClient httpClient) : ComponentBase
 {
-  private readonly NavigationManager _navigationManager = navigationManager;
   private readonly HttpClient _httpClient = httpClient;
 
   protected override async Task OnInitializedAsync()

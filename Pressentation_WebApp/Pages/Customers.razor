@@ -1,0 +1,41 @@
+﻿@page "/customers"
+@layout MainLayout
+@using Pressentation_WebApp.Components;
+
+@if (CustomersList == null)
+{
+    <p><strong>Loading...</strong></p>
+}
+else
+{
+    <CreateCustomer OnCustomerAdded="LoadCustomer"/>
+    <table class="table table-dark table-sm table-hover">
+        <caption>Table of Projects</caption>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Kund</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var customer in CustomersList)
+            {
+                <tr class="tr-mouse" @onclick="() => OpenEditDialog(customer)">
+                    <td>@customer.Id</td>
+                    <td>@customer.Name</td>
+                    <td class="text-end">
+                        <button class="btn btn-danger btn-sm" @onclick="() => ConfirmDelete(customer.Id!)" @onclick:stopPropagation="true">Ta bort</button>
+                    </td>
+                </tr>
+            }
+            @if (showCustomer)
+            {
+                <EditCustomer Customer="Customer" OnClose="CloseEditDialog" />
+            }
+        </tbody>
+    </table>
+    @if (showConfirmDialog)
+    {
+        <ConfirmDialog ModelType="ModelType.Confirmation" OnConfirmed="DeleteCustomer" />
+    }
+}

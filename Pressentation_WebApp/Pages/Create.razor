@@ -3,11 +3,9 @@
 @using Pressentation_WebApp.Components;
 @using Pressentation_WebApp.Components.Shared;
 
-<h3 class="mb-4">@message</h3>
-
 <EditForm Model="Project" OnValidSubmit="CreateProject">
     <DataAnnotationsValidator />
-    <div class="row">
+    <div class="row mt-2">
         <div class="col-md-6 mb-3">
             <label class="form-label">Projektnamn</label>
             <input @bind-value="Project!.Name" type="text" class="form-control" placeholder="Ange projektnamn.." />
