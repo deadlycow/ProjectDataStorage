@@ -35,11 +35,11 @@ public partial class Services(HttpClient httpClient) : ComponentBase
     }
     catch (HttpRequestException httpEx)
     {
-      Debug.WriteLine($"Nätverksfel: {httpEx.Message}");
+      Debug.WriteLine($"Network error: {httpEx.Message}");
     }
     catch (Exception ex)
     {
-      Debug.WriteLine($"Ett oväntat fel inträffade: {ex.Message}");
+      Debug.WriteLine($"An unexpected error occurred: {ex.Message}");
     }
   }
   private void ConfirmDelete(int employeeId)
@@ -70,7 +70,7 @@ public partial class Services(HttpClient httpClient) : ComponentBase
     }
     catch (Exception ex)
     {
-      Debug.WriteLine($"Ett fel uppstod vid uppdatering: {ex.Message}");
+      Debug.WriteLine($"An error occurred while updaing the service: {ex.Message}");
     }
     showService = false;
   }

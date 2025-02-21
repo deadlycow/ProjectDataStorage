@@ -43,8 +43,5 @@ else
             }
         </tbody>
     </table>
-    @if (showConfirmDialog)
-    {
-        <ConfirmDialog ModelType="ModelType.Confirmation" OnConfirmed="DeleteProject" />
-    }
+    <ConfirmDialog ModelType="ModelType.Confirmation" OnConfirmed="DeleteProject" Show="showConfirmDialog" />
 }

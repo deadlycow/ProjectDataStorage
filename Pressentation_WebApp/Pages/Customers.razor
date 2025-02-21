@@ -8,7 +8,7 @@
 }
 else
 {
-    <CreateCustomer OnCustomerAdded="LoadCustomer"/>
+    <CreateCustomer OnCustomerAdded="LoadCustomer" Show="true"/>
     <table class="table table-dark table-sm table-hover">
         <caption>Table of Projects</caption>
         <thead>
@@ -30,12 +30,11 @@ else
             }
             @if (showCustomer)
             {
-                <EditCustomer Customer="Customer" OnClose="CloseEditDialog" />
+                <EditCustomer Customer="Customer" OnConfirmed="UpdateCustomer" OnClose="CloseEditDialog" />
             }
         </tbody>
     </table>
-    @if (showConfirmDialog)
-    {
-        <ConfirmDialog ModelType="ModelType.Confirmation" OnConfirmed="DeleteCustomer" />
-    }
+
+    <ConfirmDialog ModelType="ModelType.Confirmation" OnConfirmed="DeleteCustomer" Show="showConfirmDialog" />
+
 }

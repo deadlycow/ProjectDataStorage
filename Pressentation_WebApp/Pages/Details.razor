@@ -77,11 +77,11 @@
                     }
                 </select>
                 <div class="row">
-                    <div class="col-md-12 mt-5 d-flex ">
+                    <div class="col-md-12 mt-5 d-flex justify-content-around">
                         <button type="submit" class="btn btn-primary" disabled="@(isEditing?false:true)">
                             @buttonStatus
                         </button>
-                        <div class="form-check d-flex align-items-center ml-4">
+                        <div class="form-check d-flex align-items-center">
                             <input type="checkbox" class="form-check-input" id="editToggle" @bind="isEditing" />
                             <label class="form-check-label" for="editToggle">Redigera</label>
                         </div>

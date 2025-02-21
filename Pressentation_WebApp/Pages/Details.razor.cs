@@ -38,12 +38,10 @@ public partial class Details(HttpClient httpClient)
 
     try
     {
-      var putTask = _httpClient.PutAsJsonAsync($"api/projects", Project);
-      var postTask = _httpClient.PostAsJsonAsync($"api/projectservice/{Project.Id}", ServiceList);
+      var putTask = await _httpClient.PutAsJsonAsync($"api/projects", Project);
+      var postTask = await _httpClient.PostAsJsonAsync($"api/projectservice/{Project.Id}", ServiceList);
 
-      var responses = await Task.WhenAll(putTask, postTask);
-
-      if (responses.All(r => r.IsSuccessStatusCode))
+      if (putTask.IsSuccessStatusCode && postTask.IsSuccessStatusCode)
       {
         buttonStatus = "Projekt uppdaterat";
         isEditing = false;

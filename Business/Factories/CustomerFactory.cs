@@ -14,5 +14,9 @@ public static class CustomerFactory
   {
     Name = entity.Name,
   };
-  
+  public static CustomerEntity Update(CustomerDto entity) => new()
+  {
+    Id = entity.Id,
+    Name = entity.Name,
+  };
 }

@@ -33,13 +33,31 @@ public partial class Customers(HttpClient httpClient)
     }
     catch (HttpRequestException httpEx)
     {
-      Debug.WriteLine($"Nätverksfel: {httpEx.Message}");
+      Debug.WriteLine($"Network error: {httpEx.Message}");
     }
     catch (Exception ex)
     {
-      Debug.WriteLine($"Ett oväntat fel inträffade: {ex.Message}");
+      Debug.WriteLine($"An unexpected error occurred: {ex.Message}");
     }
   }
+
+  private async Task UpdateCustomer(CustomerDto customer)
+  {
+    if (customer == null)
+      return;
+    try
+    {
+      var response = await _httpClient.PutAsJsonAsync("api/customer", customer);
+      response.EnsureSuccessStatusCode();
+      await LoadCustomer();
+    }
+    catch (Exception ex)
+    {
+      Debug.WriteLine($"An error occurred while updating the customer: {ex.Message}");
+    }
+    showCustomer = false;
+  }
+
   public void ConfirmDelete(int customerId)
   {
     customerToDelete = customerId;

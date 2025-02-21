@@ -8,9 +8,12 @@ public partial class CreateCustomer(HttpClient httpClient)
 {
   private readonly HttpClient _httpClient = httpClient;
   [Parameter] public EventCallback OnCustomerAdded { get; set; }
+  [Parameter] public string ConfirmationMessage { get; set; } = null!;
+  [Parameter] public bool Show { get; set; } = false;
 
   private CustomerDto Customer { get; set; } = new();
   private string message = "Lägg till";
+  private bool showConfirm = false;
   public async Task CreateCustomers()
   {
     if (Customer == null)
@@ -21,16 +24,22 @@ public partial class CreateCustomer(HttpClient httpClient)
       postTask.EnsureSuccessStatusCode();
 
       await OnCustomerAdded.InvokeAsync();
+      ConfirmationMessage = $"Kunden {Customer.Name} har skapats.";
       Customer = new();
+      showConfirm = true;
     }
     catch(HttpRequestException httpEx)
     {
-      message = $"Nätverksfel: {httpEx.Message}";
+      message = $"Network error: {httpEx.Message}";
     }
     catch (Exception ex)
     {
       Debug.WriteLine(ex.Message);
-      message = $"Ett oväntat fel inträffade";
+      message = "An unexpected error occurred";
     }
+  }
+  public void CloseConfirm()
+  {
+    showConfirm = false;
   }
 }

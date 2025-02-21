@@ -27,7 +27,6 @@
         <div class="col-md-6 mb-3">
             <div class="d-flex justify-content-between align-items-center">
                 <label class="form-label mb-0">Kund</label>
-                <button class="btn btn-light btn-sm mb-2" type="button">Lägg till ny +</button>
             </div>
             <select @bind="Project.CustomerId" class="form-select col-md-12">
                 <option value="0" selected disabled>Välj kund..</option>
@@ -48,7 +47,6 @@
         <div class="col-md-6 mb-3">
             <div class="d-flex justify-content-between align-items-center">
                 <label class="form-label mb-0">Projektansvarig</label>
-                <button class="btn btn-light btn-sm mb-2" type="button">Lägg till ny +</button>
             </div>
             <select @bind="Project.EmployeeId" class="form-select col-md-12">
                 <option value="0" selected disabled>Välj anställd..</option>
@@ -85,12 +83,9 @@
                 }
             </select>
             <ValidationMessage For="@(() => Project.StatusTypeId)" />
-            <button type="submit" class="btn btn-primary">Skapa projekt</button>
+            <button type="submit" class="btn btn-primary mt-3">Skapa projekt</button>
         </div>
         <AddServices IsEditing="true" ProjectServices="Services" />
-        @if (created)
-        {
-            <ConfirmDialog ModelType="ModelType.Information" Title="Skapande bekräftat" Message="Projektet har skapats med framgång!" OnConfirmed="HandleDialogConfirmation" />
-        }
+        <ConfirmDialog ModelType="ModelType.Information" Title="Skapande bekräftat" Message="Projektet har skapats med framgång!" OnConfirmed="HandleDialogConfirmation" Show="@Created" />
     </div>
 </EditForm>

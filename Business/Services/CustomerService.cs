@@ -101,8 +101,34 @@ public class CustomerService(ICustomerRepository repository) : ICustomerService
     throw new NotImplementedException();
   }
 
-  public Task<IResult> UpdateAsync(CustomerDto entity)
+  public async Task<IResult> UpdateAsync(CustomerDto dto)
   {
-    throw new NotImplementedException();
+    if (dto == null)
+      return Result.BadRequest("Customer cannot be null");
+    
+    var entity = CustomerFactory.Update(dto);
+    if (entity == null)
+      return Result.BadRequest("Failed to convert CustomerDto to entity");
+
+    await _repository.BeginTransactionAsync();
+    try
+    {
+      _repository.Update(entity);
+      var affecteRows = await _repository.SaveAsync();
+      if (affecteRows == 0)
+      {
+        await _repository.RollbackTransactionAsync();
+        return Result.InternalServerError("No changes saved to the database");
+      }
+
+      await _repository.CommitTransactionAsync();
+      return Result.Ok();
+    }
+    catch (Exception ex)
+    {
+      await _repository.RollbackTransactionAsync();
+      Debug.WriteLine($"Error updating customer: {ex.Message}");
+      return Result.InternalServerError("An error occurred while updating the customer");
+    }
   }
 }

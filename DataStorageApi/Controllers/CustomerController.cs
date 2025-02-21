@@ -1,6 +1,8 @@
 ﻿using Business.Dto;
+using Business.Factories;
 using Business.Interfaces;
 using Business.Models;
+using Business.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DataStorageApi.Controllers;
@@ -71,5 +73,22 @@ public class CustomerController(ICustomerService customerService) : ControllerBa
       return StatusCode(500, ex.Message);
     }
   }
+  [HttpPut]
+  public async Task<IActionResult> UpdateCustomer([FromBody] CustomerDto dto)
+  {
+    if (dto == null)
+      return BadRequest("Project data is null");
+    try
+    {
+      var response = await _customerService.UpdateAsync(dto);
+      if (response.Success)
+        return Ok(response);
 
+      return BadRequest("Customer was NOT updated");
+    }
+    catch (Exception ex)
+    {
+      return StatusCode(500, ex.Message);
+    }
+  }
 }

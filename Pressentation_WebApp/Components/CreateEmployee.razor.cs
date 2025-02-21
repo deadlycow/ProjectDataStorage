@@ -4,37 +4,39 @@ using System.Diagnostics;
 using System.Net.Http.Json;
 
 namespace Pressentation_WebApp.Components;
-public partial class CreateServices(HttpClient httpClient)
+public partial class CreateEmployee(HttpClient httpClient)
 {
   private readonly HttpClient _httpClient = httpClient;
 
-  [Parameter] public EventCallback OnServiceAdded { get; set; }
+  [Parameter] public EventCallback OnEmployeeAdded { get; set; }
   [Parameter] public string ConfirmationMessage { get; set; } = null!;
-  private ServiceTypeDto ServiceType { get; set; } = new();
+  [Parameter] public bool Show {  get; set; } = false;
+
+  private EmployeeDto Employee { get; set; } = new();
   private string message = "Lägg till";
   private bool showConfirm = false;
-  public async Task CreateService()
+
+  public async Task CreateEmployees()
   {
-    if (ServiceType == null)
+    if (Employee == null)
       return;
     try
     {
-      var postTask = await _httpClient.PostAsJsonAsync($"api/servicetype", ServiceType);
+      var postTask = await _httpClient.PostAsJsonAsync("api/employee", Employee);
       postTask.EnsureSuccessStatusCode();
 
-      await OnServiceAdded.InvokeAsync();
+      await OnEmployeeAdded.InvokeAsync();
+      ConfirmationMessage = $"Anställd {Employee.Name} har skapats";
+      Employee = new();
       showConfirm = true;
-      ConfirmationMessage = $"Tjänst {ServiceType.Name} har lagts till.";
-      ServiceType = new();
     }
     catch (HttpRequestException httpEx)
     {
       message = $"Network error: {httpEx.Message}";
     }
-    catch (Exception ex)
-    {
+    catch (Exception ex) { 
       Debug.WriteLine(ex.Message);
-      message = $"An unexpected error occurred: {ex.Message}";
+      message = "An unexpected error occurred";
     }
   }
   public void CloseConfirm()

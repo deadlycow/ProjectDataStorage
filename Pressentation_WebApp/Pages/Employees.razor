@@ -1,6 +1,7 @@
 ﻿@page "/employees"
 @using Pressentation_WebApp.Components;
 
+<CreateEmployee OnEmployeeAdded=LoadEmployees Show="true" />
 <table class="table table-dark table-sm table-hover">
     <caption>Table of Projects</caption>
     <thead>
@@ -13,11 +14,11 @@
         @if (EmployeesList != null && EmployeesList.Any())
             @foreach (var employee in EmployeesList)
             {
-                <tr class="tr-mouse">
+                <tr class="tr-mouse" @onclick="() => OpenEditDialog(employee)">
                     <td>@employee.Id</td>
                     <td>@employee.Name</td>
-                    <td>
-                        <button class="btn btn-danger" @onclick="() => ConfirmDelete(employee.Id)" @onclick:stopPropagation="true">Delete</button>
+                    <td class="text-end">
+                        <button class="btn btn-danger btn-sm" @onclick="() => ConfirmDelete(employee.Id)" @onclick:stopPropagation="true">Delete</button>
                     </td>
                 </tr>
             }
@@ -30,7 +31,8 @@
     </tbody>
 
 </table>
-@if (showConfirmDialog)
-    {
-        <ConfirmDialog ModelType="ModelType.Confirmation" OnConfirmed="DeleteProject" />
-    }
+@if (showEmployee)
+{
+    <EditEmployee OnClose="CloseEditDialog" Employee="Employee" OnConfirmed="UpdateEmployee"/>
+}
+<ConfirmDialog ModelType="ModelType.Confirmation" OnConfirmed="DeleteProject" Show="showConfirmDialog" />

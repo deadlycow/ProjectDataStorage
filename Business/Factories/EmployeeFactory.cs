@@ -11,5 +11,15 @@ public static class EmployeeFactory
     Name = entity.Name,
   };
 
-  public static IEnumerable<EmployeeDto> CreateList(IEnumerable<EmployeeEntity> employees) => employees.Select(Create); 
+  public static IEnumerable<EmployeeDto> CreateList(IEnumerable<EmployeeEntity> employees) => employees.Select(Create);
+
+  public static EmployeeEntity Create(EmployeeDto dto) => new()
+  {
+    Name = dto.Name,
+  };
+  public static EmployeeEntity Update(EmployeeDto entity) => new()
+  {
+    Id = entity.Id,
+    Name = entity.Name,
+  };
 }

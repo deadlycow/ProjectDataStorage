@@ -15,9 +15,8 @@ namespace Pressentation_WebApp.Pages
       Employees = await _httpClient.GetFromJsonAsync<IEnumerable<EmployeeDto>>("api/employee") ?? [];
       StatusType = await _httpClient.GetFromJsonAsync<IEnumerable<StatusDto>>("api/status") ?? [];
     }
-    [Parameter]
-    public List<ProjectServiceDto> Services { get; set; } = [];
-
+    [Parameter] public List<ProjectServiceDto> Services { get; set; } = [];
+    [Parameter] public bool Created { get; set; } = false;
     private IEnumerable<CustomerDto>? Customers { get; set; }
     private IEnumerable<EmployeeDto>? Employees { get; set; }
     private IEnumerable<StatusDto>? StatusType { get; set; }
@@ -25,7 +24,6 @@ namespace Pressentation_WebApp.Pages
     private ProjectDto? Project { get; set; } = new() { StartDate = DateOnly.FromDateTime(DateTime.Now)};
     private string? message;
     private readonly List<ValidationResult> validationResults = [];
-    private bool created = false;
 
     public async Task CreateProject()
     {
@@ -46,22 +44,21 @@ namespace Pressentation_WebApp.Pages
         Project = new() { StartDate = DateOnly.FromDateTime(DateTime.Now)};
         Services = [];
         message = "projekt skapat";
-        created = true;
+        Created = true;
       }
       catch (HttpRequestException httpEx)
       {
-        message = $"Nätverksfel: {httpEx.Message}";
+        message = $"Network error: {httpEx.Message}";
       }
       catch (Exception ex)
       {
         Debug.WriteLine(ex.Message);
-        message = $"Ett oväntat fel inträffade";
+        message = $"An unexpected error occurred: {ex.Message}";
       }
-
     }
     public void HandleDialogConfirmation()
     {
-      created = false;
+      Created = false;
     }
   }
 }
